@@ -19,6 +19,15 @@
             </a>
         </div>
 
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success">@TempData["Mensaje"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
         <div class="row align-items-center">
 
             <div class="col-md-6 text-center">
@@ -54,15 +63,33 @@
 
                 @if (Model.Stock > 0)
                 {
-                <span class="badge bg-success">
-                    Disponible
-                </span>
+                    <span class="badge bg-success mb-4">
+                        Disponible
+                    </span>
+
+                    <form asp-controller="Cart" asp-action="AgregarProducto" method="post" class="d-flex align-items-end gap-3">
+                        <input type="hidden" name="consecutivoProducto" value="@Model.Consecutivo" />
+                        <div>
+                            <label for="cantidad" class="form-label">Cantidad</label>
+                            <input type="number" id="cantidad" name="cantidad" value="1" min="1" max="@Model.Stock"
+                                   class="form-control" style="width: 100px" />
+                        </div>
+                        <button type="submit" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">
+                            Agregar al carrito
+                            <svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg>
+                        </button>
+                    </form>
                 }
                 else
                 {
-                <span class="badge bg-danger">
-                    Agotado
-                </span>
+                    <span class="badge bg-danger mb-4">
+                        Agotado
+                    </span>
+                    <div>
+                        <button type="button" class="btn btn-medium btn-dark text-uppercase btn-rounded-none" disabled>
+                            Agregar al carrito
+                        </button>
+                    </div>
                 }
 
             </div>

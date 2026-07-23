@@ -83,7 +83,7 @@
                                     <li><a asp-controller="Account" asp-action="Register" class="dropdown-item">Registrarse</a></li>
                                     <li><a asp-controller="Shop" asp-action="Index" class="dropdown-item">Tienda</a></li>
                                     <li><a asp-controller="Admin" asp-action="Index" class="dropdown-item">Panel Admin</a></li>
-                                    <li><a href="#" class="dropdown-item">Carrito</a></li>
+                                    <li><a asp-controller="Cart" asp-action="Index" class="dropdown-item">Carrito</a></li>
                                     <li><a href="#" class="dropdown-item">Blog</a></li>
                                     <li><a href="#" class="dropdown-item">Contacto</a></li>
                                 </ul>
@@ -97,7 +97,7 @@
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#">
+                                            <a asp-controller="Cart" asp-action="Index">
                                                 <svg class="cart"><use xlink:href="#cart"></use></svg>
                                             </a>
                                         </li>
