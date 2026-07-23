@@ -1,50 +1,205 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ProgramacionAvanzadaWebProyecto</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ProgramacionAvanzadaWebProyecto.styles.css" asp-append-version="true" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>@ViewData["Title"] - MiniStore</title>
+
+    <link rel="stylesheet" type="text/css" href="~/ministore/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/ministore/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+
+    <script src="~/ministore/js/modernizr.js"></script>
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+<body data-bs-spy="scroll" data-bs-target="#navbar" data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true" tabindex="0">
+
+    
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="search" viewBox="0 0 32 32">
+            <path fill="currentColor" d="M19 3C13.488 3 9 7.488 9 13c0 2.395.84 4.59 2.25 6.313L3.281 27.28l1.439 1.44l7.968-7.969A9.922 9.922 0 0 0 19 23c5.512 0 10-4.488 10-10S24.512 3 19 3zm0 2c4.43 0 8 3.57 8 8s-3.57 8-8 8s-8-3.57-8-8s3.57-8 8-8z" />
+        </symbol>
+        <symbol id="user" viewBox="0 0 16 16">
+            <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+        </symbol>
+        <symbol id="cart" viewBox="0 0 16 16">
+            <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+        </symbol>
+        <symbol id="navbar-icon" viewBox="0 0 16 16">
+            <path d="M14 10.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 .5-.5zm0-3a.5.5 0 0 0-.5-.5h-7a.5.5 0 0 0 0 1h7a.5.5 0 0 0 .5-.5zm0-3a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0 0 1h11a.5.5 0 0 0 .5-.5z" />
+        </symbol>
+        <symbol id="facebook" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z" />
+        </symbol>
+        <symbol id="instagram" viewBox="0 0 256 256">
+            <path fill="currentColor" d="M128 80a48 48 0 1 0 48 48a48.05 48.05 0 0 0-48-48Zm0 80a32 32 0 1 1 32-32a32 32 0 0 1-32 32Zm48-136H80a56.06 56.06 0 0 0-56 56v96a56.06 56.06 0 0 0 56 56h96a56.06 56.06 0 0 0 56-56V80a56.06 56.06 0 0 0-56-56Zm40 152a40 40 0 0 1-40 40H80a40 40 0 0 1-40-40V80a40 40 0 0 1 40-40h96a40 40 0 0 1 40 40ZM192 76a12 12 0 1 1-12-12a12 12 0 0 1 12 12Z" />
+        </symbol>
+        <symbol id="linkedin" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M6.94 5a2 2 0 1 1-4-.002a2 2 0 0 1 4 .002zM7 8.48H3V21h4V8.48zm6.32 0H9.34V21h3.94v-6.57c0-3.66 4.77-4 4.77 0V21H22v-7.93c0-6.17-7.06-5.94-8.72-2.91l.04-1.68z" />
+        </symbol>
+    </svg>
+
+    
+    <header id="header" class="site-header header-scrolled position-fixed text-black bg-light">
+        <nav id="header-nav" class="navbar navbar-expand-lg px-3 mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ProgramacionAvanzadaWebProyecto</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <img src="~/ministore/images/main-logo.png" class="logo" alt="MiniStore" />
+                </a>
+                <button class="navbar-toggler d-flex d-lg-none order-3 p-2" type="button"
+                        data-bs-toggle="offcanvas" data-bs-target="#bdNavbar"
+                        aria-controls="bdNavbar" aria-expanded="false" aria-label="Alternar navegación">
+                    <svg class="navbar-icon"><use xlink:href="#navbar-icon"></use></svg>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="bdNavbar" aria-labelledby="bdNavbarOffcanvasLabel">
+                    <div class="offcanvas-header px-4 pb-0">
+                        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                            <img src="~/ministore/images/main-logo.png" class="logo" alt="MiniStore" />
+                        </a>
+                        <button type="button" class="btn-close btn-close-black" data-bs-dismiss="offcanvas"
+                                aria-label="Cerrar" data-bs-target="#bdNavbar"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul id="navbar" class="navbar-nav text-uppercase justify-content-end align-items-center flex-grow-1 pe-3">
+                            <li class="nav-item">
+                                <a class="nav-link me-4" asp-controller="Home" asp-action="Index">Inicio</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link me-4" asp-controller="Shop" asp-action="Index">Productos</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link me-4 dropdown-toggle link-dark" data-bs-toggle="dropdown"
+                                   href="#" role="button" aria-expanded="false">Páginas</a>
+                                <ul class="dropdown-menu">
+                                    <li><a asp-controller="Account" asp-action="Login" class="dropdown-item">Iniciar sesión</a></li>
+                                    <li><a asp-controller="Account" asp-action="Register" class="dropdown-item">Registrarse</a></li>
+                                    <li><a asp-controller="Shop" asp-action="Index" class="dropdown-item">Tienda</a></li>
+                                    <li><a asp-controller="Admin" asp-action="Index" class="dropdown-item">Panel Admin</a></li>
+                                    <li><a asp-controller="Cart" asp-action="Index" class="dropdown-item">Carrito</a></li>
+                                    <li><a href="#" class="dropdown-item">Blog</a></li>
+                                    <li><a href="#" class="dropdown-item">Contacto</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <div class="user-items ps-5">
+                                    <ul class="d-flex justify-content-end list-unstyled">
+                                        <li class="pe-3">
+                                            <a asp-controller="Account" asp-action="Login">
+                                                <svg class="user"><use xlink:href="#user"></use></svg>
+                                            </a>
+                                        </li>
+                                        @if (Context.Session.GetString("Autenticado") == "1")
+                                        {
+                                            <li class="pe-3">
+                                                <a asp-controller="Usuario" asp-action="Configuracion" title="Configuración">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                                        <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
+                                                    </svg>
+                                                </a>
+                                            </li>
+                                        }
+                                        <li>
+                                            <a asp-controller="Cart" asp-action="Index">
+                                                <svg class="cart"><use xlink:href="#cart"></use></svg>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer id="footer" class="footer padding-large pb-0">
+        <div class="container">
+            <div class="footer-top">
+                <div class="row d-flex flex-wrap">
+                    <div class="col-lg-4 col-sm-6 pb-3">
+                        <div class="footer-menu">
+                            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                                <img src="~/ministore/images/main-logo.png" class="logo" alt="MiniStore" />
+                            </a>
+                            <p class="pt-3">
+                                Tu tienda de tecnología en línea. Encontrá los mejores productos,
+                                ofertas y lanzamientos con una experiencia de compra simple y moderna.
+                            </p>
+                            <ul class="social-links d-flex list-unstyled">
+                                <li><a href="#"><svg class="facebook"><use xlink:href="#facebook" /></svg></a></li>
+                                <li><a href="#"><svg class="instagram"><use xlink:href="#instagram" /></svg></a></li>
+                                <li><a href="#"><svg class="linkedin"><use xlink:href="#linkedin" /></svg></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-sm-6 pb-3">
+                        <div class="footer-menu text-uppercase">
+                            <h5 class="widget-title pb-2">Enlaces rápidos</h5>
+                            <ul class="menu-list list-unstyled text-uppercase">
+                                <li class="menu-item pb-2"><a asp-controller="Home" asp-action="Index">Inicio</a></li>
+                                <li class="menu-item pb-2"><a href="#">Acerca de</a></li>
+                                <li class="menu-item pb-2"><a asp-controller="Shop" asp-action="Index">Tienda</a></li>
+                                <li class="menu-item pb-2"><a href="#">Blog</a></li>
+                                <li class="menu-item pb-2"><a href="#">Contacto</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6 pb-3">
+                        <div class="footer-menu text-uppercase">
+                            <h5 class="widget-title pb-2">Ayuda e información</h5>
+                            <ul class="menu-list list-unstyled">
+                                <li class="menu-item pb-2"><a href="#">Rastrea tu pedido</a></li>
+                                <li class="menu-item pb-2"><a href="#">Políticas de devolución</a></li>
+                                <li class="menu-item pb-2"><a href="#">Envíos y entregas</a></li>
+                                <li class="menu-item pb-2"><a href="#">Preguntas frecuentes</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6 pb-3">
+                        <div class="footer-menu contact-item">
+                            <h5 class="widget-title text-uppercase pb-2">Contáctanos</h5>
+                            <p>¿Tenés alguna consulta? <a href="mailto:yourinfo@gmail.com">yourinfo@gmail.com</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+    </footer>
+
+    <div id="footer-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="copyright">
+                        <p>© Derechos reservados @DateTime.Now.Year MiniStore.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - ProgramacionAvanzadaWebProyecto - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/ministore/js/jquery-1.11.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <script src="~/ministore/js/bootstrap.bundle.min.js"></script>
+    <script src="~/ministore/js/plugins.js"></script>
+    <script src="~/ministore/js/script.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

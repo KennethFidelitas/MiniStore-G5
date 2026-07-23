@@ -1,0 +1,97 @@
+﻿@model ProductoModel
+
+@{
+    ViewData["Title"] = "Detalle del producto";
+
+    var rutaImagen = string.IsNullOrWhiteSpace(Model.Imagen)
+        ? Url.Content("~/ministore/images/product-item1.jpg")
+        : Url.Content($"~/ministore/images/{Model.Imagen.TrimStart('/', '\\')}");
+}
+
+<section class="padding-large">
+    <div class="container">
+
+        <div class="mb-4">
+            <a asp-controller="Shop"
+               asp-action="Index"
+               class="btn btn-outline-dark">
+                Volver a la tienda
+            </a>
+        </div>
+
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success">@TempData["Mensaje"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <div class="row align-items-center">
+
+            <div class="col-md-6 text-center">
+                <img src="@rutaImagen"
+                     alt="@Model.Nombre"
+                     class="img-fluid"
+                     style="max-height:500px; object-fit:contain;"
+                     onerror="this.onerror=null;this.src='@Url.Content("~/ministore/images/product-item1.jpg")';" />
+            </div>
+
+            <div class="col-md-6">
+
+                <p class="text-muted text-uppercase">
+                    @Model.NombreCategoria
+                </p>
+
+                <h1 class="display-5 text-uppercase">
+                    @Model.Nombre
+                </h1>
+
+                <h2 class="text-primary mt-4">
+                    ₡@Model.Precio.ToString("N2")
+                </h2>
+
+                <p class="lead mt-4">
+                    @Model.Descripcion
+                </p>
+
+                <p>
+                    <strong>Stock disponible:</strong>
+                    @Model.Stock
+                </p>
+
+                @if (Model.Stock > 0)
+                {
+                    <span class="badge bg-success mb-4">
+                        Disponible
+                    </span>
+
+                    <form asp-controller="Cart" asp-action="AgregarProducto" method="post" class="d-flex align-items-end gap-3">
+                        <input type="hidden" name="consecutivoProducto" value="@Model.Consecutivo" />
+                        <div>
+                            <label for="cantidad" class="form-label">Cantidad</label>
+                            <input type="number" id="cantidad" name="cantidad" value="1" min="1" max="@Model.Stock"
+                                   class="form-control" style="width: 100px" />
+                        </div>
+                        <button type="submit" class="btn btn-dark px-4 py-2 d-flex align-items-center gap-2"><i class="bi bi-cart-plus"></i><span>Agregar al carrito</span></button>
+                    </form>
+                }
+                else
+                {
+                    <span class="badge bg-danger mb-4">
+                        Agotado
+                    </span>
+                    <div>
+                        <button type="button" class="btn btn-medium btn-dark text-uppercase btn-rounded-none" disabled>
+                            Agregar al carrito
+                        </button>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+</section>

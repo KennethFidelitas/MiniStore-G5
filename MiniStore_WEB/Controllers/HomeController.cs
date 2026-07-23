@@ -1,14 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
 using ProgramacionAvanzadaWebProyecto.Models;
+using ProgramacionAvanzadaWebProyecto.Services;
 using System.Diagnostics;
 
 namespace ProgramacionAvanzadaWebProyecto.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(ICatalogoService catalogoService) : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return Redirect("/ministore/index.html");
+            var respuesta = await catalogoService.ListarProductosAsync();
+
+            if (!respuesta.Exitoso)
+            {
+                ViewBag.Error = respuesta.Mensaje
+                    ?? "No fue posible cargar los productos.";
+            }
+
+            var productos = respuesta.Datos?
+                .Where(producto => producto.Estado)
+                .Take(8)
+                .ToList() ?? new List<ProductoModel>();
+
+            return View(productos);
         }
 
         public IActionResult Privacy()

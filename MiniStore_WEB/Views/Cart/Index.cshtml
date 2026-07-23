@@ -1,0 +1,80 @@
+﻿@model List<CarritoItemModel>
+
+@{
+    ViewData["Title"] = "Carrito";
+}
+
+<section class="padding-large">
+    <div class="container">
+        <h1 class="display-7 text-uppercase text-dark mb-4">Tu carrito</h1>
+
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success">@TempData["Mensaje"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        @if (Model == null || Model.Count == 0)
+        {
+            <div class="alert alert-info">
+                Tu carrito está vacío.
+                <a asp-controller="Shop" asp-action="Index">Ir a la tienda</a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-uppercase">
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.NombreProducto</td>
+                                <td>₡@item.PrecioUnitario.ToString("N2")</td>
+                                <td>@item.Cantidad</td>
+                                <td>₡@item.Subtotal.ToString("N2")</td>
+                                <td class="text-end">
+                                    <form asp-controller="Cart" asp-action="Eliminar" method="post" class="d-inline">
+                                        <input type="hidden" name="consecutivoDetalle" value="@item.Consecutivo" />
+                                        <button type="submit" class="btn btn-outline-dark btn-sm">Quitar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+                <form asp-controller="Cart" asp-action="Vaciar" method="post">
+                    <button type="submit" class="btn btn-outline-dark text-uppercase">Vaciar carrito</button>
+                </form>
+
+                <div class="text-end">
+                    <h3 class="text-uppercase">
+                        Total: <span class="text-primary">₡@Model.Sum(i => i.Subtotal).ToString("N2")</span>
+                    </h3>
+                    <a href="#" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">
+                        Finalizar compra
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</section>
