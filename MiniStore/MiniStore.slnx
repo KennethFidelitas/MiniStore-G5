@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../MiniStore_API/MiniStore_API.csproj" />
+  <Project Path="../MiniStore_WEB/MiniStore_WEB.csproj" />
+</Solution>
