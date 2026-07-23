@@ -1,0 +1,97 @@
+@model ProductoFormViewModel
+
+@{
+    Layout = "_AdminLayout";
+    var esEdicion = Model.Producto.Consecutivo > 0;
+    ViewData["Title"] = esEdicion ? "Editar producto" : "Nuevo producto";
+}
+
+<div class="admin-page-heading">
+    <div>
+        <a class="admin-back-link" asp-controller="Admin" asp-action="Productos">← Volver a productos</a>
+        <span class="admin-kicker">Catálogo</span>
+        <h1>@(esEdicion ? "Editar producto" : "Nuevo producto")</h1>
+        <p>@(esEdicion ? "Actualizá la información del producto seleccionado." : "Agregá un nuevo artículo al catálogo de MiniStore.")</p>
+    </div>
+</div>
+
+<form asp-controller="Admin"
+      asp-action="GuardarProducto"
+      method="post"
+      class="admin-product-form">
+    @Html.AntiForgeryToken()
+    <input asp-for="Producto.Consecutivo" type="hidden" />
+    <input asp-for="Producto.Estado" type="hidden" />
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <section class="admin-panel">
+        <div class="admin-panel-heading">
+            <div>
+                <span class="admin-kicker">Información principal</span>
+                <h2>Detalles del producto</h2>
+            </div>
+        </div>
+
+        <div class="admin-form-grid">
+            <div class="admin-field admin-field-wide">
+                <label asp-for="Producto.Nombre"></label>
+                <input asp-for="Producto.Nombre" class="form-control" placeholder="Ej. Audífonos inalámbricos" />
+                <span asp-validation-for="Producto.Nombre" class="text-danger"></span>
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Producto.ConsecutivoCategoria"></label>
+                <select asp-for="Producto.ConsecutivoCategoria" class="form-select">
+                    <option value="">Seleccioná una categoría</option>
+                    @foreach (var categoria in Model.Categorias)
+                    {
+                        <option value="@categoria.Consecutivo">@categoria.NombreCategoria</option>
+                    }
+                </select>
+                <span asp-validation-for="Producto.ConsecutivoCategoria" class="text-danger"></span>
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Producto.Precio"></label>
+                <div class="admin-input-prefix">
+                    <span>$</span>
+                    <input asp-for="Producto.Precio" class="form-control" step="0.01" min="0.01" />
+                </div>
+                <span asp-validation-for="Producto.Precio" class="text-danger"></span>
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Producto.Stock"></label>
+                <input asp-for="Producto.Stock" class="form-control" min="0" />
+                <span asp-validation-for="Producto.Stock" class="text-danger"></span>
+            </div>
+
+            <div class="admin-field">
+                <label asp-for="Producto.Imagen">Ruta de imagen</label>
+                <input asp-for="Producto.Imagen" class="form-control" placeholder="images/producto.jpg" />
+                <span asp-validation-for="Producto.Imagen" class="text-danger"></span>
+            </div>
+
+            <div class="admin-field admin-field-wide">
+                <label asp-for="Producto.Descripcion"></label>
+                <textarea asp-for="Producto.Descripcion"
+                          class="form-control"
+                          rows="5"
+                          placeholder="Describí las características principales del producto"></textarea>
+                <span asp-validation-for="Producto.Descripcion" class="text-danger"></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="admin-form-actions">
+        <a class="admin-cancel-button" asp-controller="Admin" asp-action="Productos">Cancelar</a>
+        <button type="submit" class="admin-primary-button">
+            @(esEdicion ? "Guardar cambios" : "Crear producto")
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

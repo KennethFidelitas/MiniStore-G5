@@ -1,0 +1,21 @@
+@{
+    Layout = "_MiniStoreAuthLayout";
+    ViewData["Title"] = "Acceso denegado";
+}
+
+<section class="auth-shell">
+    <div class="container">
+        <div class="auth-form-panel mx-auto text-center" style="max-width: 680px;">
+            <span class="auth-form-kicker">Área protegida</span>
+            <h1 class="mb-3">No tenés permiso para ingresar</h1>
+            <p class="mb-4">
+                Esta sección está disponible únicamente para usuarios con el rol Administrador.
+            </p>
+            <a class="btn btn-medium btn-dark text-uppercase btn-rounded-none"
+               asp-controller="Home"
+               asp-action="Index">
+                Volver a la tienda
+            </a>
+        </div>
+    </div>
+</section>

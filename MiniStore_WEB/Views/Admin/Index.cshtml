@@ -1,0 +1,83 @@
+@model AdminResumenModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="admin-page-heading">
+    <div>
+        <span class="admin-kicker">Vista general</span>
+        <h1>Dashboard</h1>
+        <p>Resumen actualizado del catálogo y la operación de MiniStore.</p>
+    </div>
+    <a class="admin-primary-button" asp-controller="Admin" asp-action="GuardarProducto">
+        + Nuevo producto
+    </a>
+</div>
+
+@if (ViewBag.Mensaje != null)
+{
+    <div class="alert alert-danger">@ViewBag.Mensaje</div>
+}
+
+<section class="admin-stat-grid" aria-label="Resumen administrativo">
+    <article class="admin-stat-card accent-dark">
+        <span class="admin-stat-label">Productos</span>
+        <strong>@Model.TotalProductos</strong>
+        <small>Registrados en el catálogo</small>
+    </article>
+    <article class="admin-stat-card accent-green">
+        <span class="admin-stat-label">Activos</span>
+        <strong>@Model.ProductosActivos</strong>
+        <small>Visibles para clientes</small>
+    </article>
+    <article class="admin-stat-card accent-amber">
+        <span class="admin-stat-label">Inactivos</span>
+        <strong>@Model.ProductosInactivos</strong>
+        <small>Ocultos temporalmente</small>
+    </article>
+    <article class="admin-stat-card accent-red">
+        <span class="admin-stat-label">Sin stock</span>
+        <strong>@Model.ProductosSinStock</strong>
+        <small>Requieren reposición</small>
+    </article>
+</section>
+
+<section class="admin-dashboard-grid">
+    <article class="admin-panel">
+        <div class="admin-panel-heading">
+            <div>
+                <span class="admin-kicker">Operación</span>
+                <h2>Indicadores generales</h2>
+            </div>
+        </div>
+        <div class="admin-metric-list">
+            <div>
+                <span>Categorías activas</span>
+                <strong>@Model.TotalCategorias</strong>
+            </div>
+            <div>
+                <span>Usuarios registrados</span>
+                <strong>@Model.TotalUsuarios</strong>
+            </div>
+            <div>
+                <span>Pedidos realizados</span>
+                <strong>@Model.TotalPedidos</strong>
+            </div>
+            <div>
+                <span>Ventas pagadas</span>
+                <strong>@Model.VentasTotales.ToString("C2")</strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="admin-panel admin-action-panel">
+        <span class="admin-kicker">Acceso rápido</span>
+        <h2>Gestioná el catálogo</h2>
+        <p>Revisá existencias, editá la información o cambiá la visibilidad de cualquier producto.</p>
+        <a class="admin-secondary-button" asp-controller="Admin" asp-action="Productos">
+            Ir a productos →
+        </a>
+    </article>
+</section>

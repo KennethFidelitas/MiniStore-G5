@@ -9,6 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUtilesService, UtilesService>();
+builder.Services.AddAuthorization();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

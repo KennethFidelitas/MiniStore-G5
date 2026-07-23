@@ -1,0 +1,127 @@
+@model List<ProductoModel>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Gestión de productos";
+}
+
+<div class="admin-page-heading">
+    <div>
+        <span class="admin-kicker">Catálogo</span>
+        <h1>Gestión de productos</h1>
+        <p>Listado completo de productos activos e inactivos.</p>
+    </div>
+    <a class="admin-primary-button" asp-controller="Admin" asp-action="GuardarProducto">
+        + Nuevo producto
+    </a>
+</div>
+
+@if (TempData["MensajeExito"] != null)
+{
+    <div class="alert alert-success">@TempData["MensajeExito"]</div>
+}
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alert-danger">@TempData["MensajeError"]</div>
+}
+@if (ViewBag.Mensaje != null)
+{
+    <div class="alert alert-danger">@ViewBag.Mensaje</div>
+}
+
+<section class="admin-panel admin-table-panel">
+    <div class="admin-table-toolbar">
+        <div>
+            <strong>@Model.Count productos</strong>
+            <span>Todos los estados</span>
+        </div>
+        <label class="admin-search">
+            <span>Buscar</span>
+            <input type="search" placeholder="Nombre o categoría" data-product-search />
+        </label>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table admin-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="admin-empty-state">
+                            No hay productos registrados.
+                        </td>
+                    </tr>
+                }
+                @foreach (var producto in Model)
+                {
+                    <tr data-product-row data-search-value="@($"{producto.Nombre} {producto.NombreCategoria}".ToLowerInvariant())">
+                        <td>
+                            <div class="admin-product-cell">
+                                <span class="admin-product-avatar">@producto.Nombre[..1].ToUpperInvariant()</span>
+                                <div>
+                                    <strong>@producto.Nombre</strong>
+                                    <small>#@producto.Consecutivo</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@producto.NombreCategoria</td>
+                        <td>@producto.Precio.ToString("C2")</td>
+                        <td>
+                            <span class="@(producto.Stock == 0 ? "admin-stock-empty" : "")">
+                                @producto.Stock
+                            </span>
+                        </td>
+                        <td>
+                            <span class="admin-status @(producto.Estado ? "active" : "inactive")">
+                                @(producto.Estado ? "Activo" : "Inactivo")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="admin-row-actions">
+                                <a asp-controller="Admin"
+                                   asp-action="GuardarProducto"
+                                   asp-route-id="@producto.Consecutivo">
+                                    Editar
+                                </a>
+                                <form asp-controller="Admin"
+                                      asp-action="CambiarEstadoProducto"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@producto.Consecutivo" />
+                                    <input type="hidden" name="estado" value="@(!producto.Estado ? "true" : "false")" />
+                                    <button type="submit"
+                                            class="@(producto.Estado ? "danger" : "success")"
+                                            onclick="return confirm('¿Confirmás que querés @(producto.Estado ? "desactivar" : "activar") este producto?');">
+                                        @(producto.Estado ? "Desactivar" : "Activar")
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        const searchInput = document.querySelector("[data-product-search]");
+        searchInput?.addEventListener("input", event => {
+            const term = event.target.value.toLowerCase().trim();
+            document.querySelectorAll("[data-product-row]").forEach(row => {
+                row.hidden = !row.dataset.searchValue.includes(term);
+            });
+        });
+    </script>
+}
