@@ -1,0 +1,98 @@
+@model UsuarioModel
+
+@{
+    ViewData["Title"] = "Configuración de la cuenta";
+    var nombre = Context.Session.GetString("Nombre");
+    var nombreRol = Context.Session.GetString("NombreRol");
+}
+
+<section class="py-5" style="margin-top: 90px;">
+    <div class="container">
+
+        <div class="row mb-4">
+            <div class="col-12 col-lg-6 mx-auto">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <div class="mb-2">
+                            <svg width="56" height="56" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                            </svg>
+                        </div>
+                        <h3 class="mb-0">@nombre</h3>
+                        <p class="text-muted">@nombreRol</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3">Cambiar contraseña</h5>
+
+                        @if (ViewBag.MensajeSeguridad != null)
+                        {
+                            <div class="alert alert-info alert-dismissible show fade text-center mb-4">
+                                @ViewBag.MensajeSeguridad
+                            </div>
+                        }
+
+                        <form id="SeguridadForm" asp-action="CambiarContrasenna" asp-controller="Usuario" method="post">
+
+                            <div class="mb-3">
+                                <label asp-for="Contrasenna" class="form-label">Contraseña Nueva</label>
+                                <input asp-for="Contrasenna" type="password" class="form-control">
+                                <span asp-validation-for="Contrasenna" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="ConfirmarContrasenna" class="form-label">Confirmar Contraseña</label>
+                                <input asp-for="ConfirmarContrasenna" type="password" class="form-control">
+                                <span asp-validation-for="ConfirmarContrasenna" class="text-danger small"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-dark text-uppercase btn-rounded-none">Procesar</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3">Editar perfil</h5>
+
+                        @if (ViewBag.MensajePerfil != null)
+                        {
+                            <div class="alert alert-info alert-dismissible show fade text-center mb-4">
+                                @ViewBag.MensajePerfil
+                            </div>
+                        }
+
+                        <form id="PerfilForm" asp-action="CambiarPerfil" asp-controller="Usuario" method="post">
+
+                            <div class="mb-3">
+                                <label asp-for="Nombre" class="form-label">Nombre</label>
+                                <input asp-for="Nombre" type="text" class="form-control">
+                                <span asp-validation-for="Nombre" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="CorreoElectronico" class="form-label">Correo Electrónico</label>
+                                <input asp-for="CorreoElectronico" type="text" class="form-control">
+                                <span asp-validation-for="CorreoElectronico" class="text-danger small"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-dark text-uppercase btn-rounded-none">Procesar</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

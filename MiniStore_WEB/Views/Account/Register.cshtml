@@ -1,0 +1,98 @@
+@model UsuarioModel
+
+@{
+    Layout = "_MiniStoreAuthLayout";
+    ViewData["Title"] = "Registrarse";
+}
+
+<section class="auth-shell auth-shell-register">
+    <div class="container">
+        <div class="row align-items-center g-0 auth-card-wrap">
+            <div class="col-lg-6 order-lg-2">
+                <div class="auth-showcase auth-showcase-register">
+                    <span class="auth-kicker">Unite a MiniStore</span>
+                    <h1>Creá una cuenta con nosotros.</h1>
+                    <p>Construí tu perfil de miembro con un proceso de registro seguro.</p>
+
+                    <div class="auth-stat-row">
+                        <div class="auth-stat-box">
+                            <strong>24/7</strong>
+                            <span>Inspiración de productos</span>
+                        </div>
+                        <div class="auth-stat-box">
+                            <strong>Nuevo</strong>
+                            <span>Lanzamientos cada temporada</span>
+                        </div>
+                        <div class="auth-stat-box">
+                            <strong>Fácil</strong>
+                            <span>Lista de deseos y seguimiento después</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="auth-form-panel">
+                    <div class="auth-form-header">
+                        <span class="auth-form-kicker">Empezá ahora</span>
+                        <h2>Registrarse</h2>
+                        <p>Registrate y empeza a comprar tus artículos de tecnología favoritos</p>
+                    </div>
+
+                    <form asp-controller="Account" asp-action="Register" method="post" class="auth-form auth-form-register">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="auth-input-group">
+                            <label asp-for="Nombre"></label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Alex" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="auth-input-group">
+                            <label asp-for="CorreoElectronico"></label>
+                            <input asp-for="CorreoElectronico" class="form-control" placeholder="nombre@ejemplo.com" />
+                            <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="auth-input-group">
+                                    <label asp-for="Contrasenna"></label>
+                                    <input asp-for="Contrasenna" class="form-control" placeholder="Creá una contraseña" />
+                                    <span asp-validation-for="Contrasenna" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="auth-input-group">
+                                    <label asp-for="ConfirmarContrasenna"></label>
+                                    <input asp-for="ConfirmarContrasenna" class="form-control" placeholder="Repetí la contraseña" />
+                                    <span asp-validation-for="ConfirmarContrasenna" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="auth-options auth-options-stack">
+                            <label class="auth-check">
+                                <input type="checkbox" />
+                                <span>Acepto los términos y la política de privacidad.</span>
+                            </label>
+                            <label class="auth-check">
+                                <input type="checkbox" />
+                                <span>Quiero recibir novedades sobre lanzamientos y ofertas.</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-medium btn-dark text-uppercase btn-rounded-none auth-submit">
+                            Crear cuenta
+                        </button>
+                    </form>
+
+                    <p class="auth-switch">
+                        ¿Ya tenés una cuenta?
+                        <a asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

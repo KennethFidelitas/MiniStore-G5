@@ -1,0 +1,96 @@
+@model UsuarioModel
+
+@{
+    Layout = "_MiniStoreAuthLayout";
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<section class="auth-shell">
+    <div class="container">
+        <div class="row align-items-center g-0 auth-card-wrap">
+            <div class="col-lg-6">
+                <div class="auth-showcase">
+                    <span class="auth-kicker">Bienvenido de nuevo</span>
+                    <h1>Iniciá sesión y seguí comprando con estilo.</h1>
+                    <p>
+                        Accedé a tu lista de deseos, pedidos recientes y lanzamientos destacados con una pantalla que combina con el estilo de MiniStore.
+                    </p>
+
+                    <div class="auth-feature-grid">
+                        <div class="auth-feature-box">
+                            <h3>Pago rápido</h3>
+                            <p>Todo lo importante a un solo toque.</p>
+                        </div>
+                        <div class="auth-feature-box">
+                            <h3>Ofertas seleccionadas</h3>
+                            <p>Promos, lanzamientos y destacados en un solo lugar.</p>
+                        </div>
+                    </div>
+
+                    <div class="auth-showcase-panel">
+                        <span class="auth-panel-label">Acceso de miembros</span>
+                        <strong>Lanzamientos exclusivos cada semana</strong>
+                        <p>Limpio, moderno y totalmente alineado con la experiencia de la tienda.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="auth-form-panel">
+                    <div class="auth-form-header">
+                        <span class="auth-form-kicker">Acceso a la cuenta</span>
+                        <h2>Iniciar sesión</h2>
+                    </div>
+
+                    @if (ViewBag.Mensaje != null)
+                    {
+                        <div class="alert alert-danger text-center mb-3">
+                            @ViewBag.Mensaje
+                        </div>
+                    }
+                    <form asp-controller="Account" asp-action="Login" method="post" class="auth-form">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="auth-input-group">
+                            <label asp-for="CorreoElectronico"></label>
+                            <input asp-for="CorreoElectronico" class="form-control" placeholder="nombre@ejemplo.com" />
+                            <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
+                        </div>
+
+                        <div class="auth-input-group">
+                            <div class="auth-label-row">
+                                <label asp-for="Contrasenna"></label>
+                                <a asp-controller="Account" asp-action="RecuperarCuenta">¿Olvidaste tu contraseña?</a>
+                            </div>
+                            <input asp-for="Contrasenna" class="form-control" placeholder="Ingresá tu contraseña" />
+                            <span asp-validation-for="Contrasenna" class="text-danger"></span>
+                        </div>
+
+                        <div class="auth-options">
+                            <label class="auth-check">
+                                <input type="checkbox" />
+                                <span>Mantener sesión iniciada</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-medium btn-dark text-uppercase btn-rounded-none auth-submit">
+                            Iniciar sesión
+                        </button>
+                    </form>
+
+                    <div class="auth-divider"><span>o continuá con</span></div>
+
+                    <div class="auth-socials">
+                        <a href="#" class="auth-social-btn">Google</a>
+                        <a href="#" class="auth-social-btn">Apple</a>
+                    </div>
+
+                    <p class="auth-switch">
+                        ¿Sos nuevo aquí?
+                        <a asp-controller="Account" asp-action="Register">Creá tu cuenta</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

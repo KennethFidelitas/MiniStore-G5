@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../MiniStore_API/MiniStore_API.csproj" Id="16530c7d-9e74-4677-967e-6e0085470b53" />
+  <Project Path="MiniStore_WEB.csproj" />
+</Solution>
