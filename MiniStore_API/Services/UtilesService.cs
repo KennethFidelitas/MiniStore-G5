@@ -46,7 +46,7 @@ namespace MiniStore_API.Services
             }
         }
 
-        public string GenerarToken(int consecutivo)
+        public string GenerarToken(int consecutivo, string nombreRol)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = System.Text.Encoding.ASCII.GetBytes(_config["Jwt:SecretKey"]!);
@@ -54,7 +54,8 @@ namespace MiniStore_API.Services
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(new[]
                 {
-                    new System.Security.Claims.Claim("consecutivo", consecutivo.ToString())
+                    new System.Security.Claims.Claim("consecutivo", consecutivo.ToString()),
+                    new System.Security.Claims.Claim(ClaimTypes.Role, nombreRol)
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(30),
                 SigningCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(

@@ -43,6 +43,10 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
                 if (datos!.UsaContrasennaTemp)
                     return RedirectToAction("Configuracion", "Usuario");
 
+                if (datos.ConsecutivoRol == 2 ||
+                    string.Equals(datos.NombreRol, "Administrador", StringComparison.OrdinalIgnoreCase))
+                    return RedirectToAction("Index", "Admin");
+
                 return RedirectToAction("Index", "Home");
             }
             else if (response.StatusCode == HttpStatusCode.NotFound)
@@ -143,6 +147,12 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
         }
 
         #endregion
+
+        [HttpGet]
+        public IActionResult AccesoDenegado()
+        {
+            return View();
+        }
 
     }
 }
