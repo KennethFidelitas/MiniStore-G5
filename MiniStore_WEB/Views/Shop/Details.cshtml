@@ -1,0 +1,73 @@
+﻿@model ProductoModel
+
+@{
+    ViewData["Title"] = "Detalle del producto";
+
+    var rutaImagen = string.IsNullOrWhiteSpace(Model.Imagen)
+        ? Url.Content("~/ministore/images/product-item1.jpg")
+        : Url.Content($"~/ministore/images/{Model.Imagen.TrimStart('/', '\\')}");
+}
+
+<section class="padding-large">
+    <div class="container">
+
+        <div class="mb-4">
+            <a asp-controller="Shop"
+               asp-action="Index"
+               class="btn btn-outline-dark">
+                Volver a la tienda
+            </a>
+        </div>
+
+        <div class="row align-items-center">
+
+            <div class="col-md-6 text-center">
+                <img src="@rutaImagen"
+                     alt="@Model.Nombre"
+                     class="img-fluid"
+                     style="max-height:500px; object-fit:contain;"
+                     onerror="this.onerror=null;this.src='@Url.Content("~/ministore/images/product-item1.jpg")';" />
+            </div>
+
+            <div class="col-md-6">
+
+                <p class="text-muted text-uppercase">
+                    @Model.NombreCategoria
+                </p>
+
+                <h1 class="display-5 text-uppercase">
+                    @Model.Nombre
+                </h1>
+
+                <h2 class="text-primary mt-4">
+                    ₡@Model.Precio.ToString("N2")
+                </h2>
+
+                <p class="lead mt-4">
+                    @Model.Descripcion
+                </p>
+
+                <p>
+                    <strong>Stock disponible:</strong>
+                    @Model.Stock
+                </p>
+
+                @if (Model.Stock > 0)
+                {
+                <span class="badge bg-success">
+                    Disponible
+                </span>
+                }
+                else
+                {
+                <span class="badge bg-danger">
+                    Agotado
+                </span>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+</section>

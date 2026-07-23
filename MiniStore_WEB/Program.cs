@@ -10,6 +10,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddSession();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ICatalogoService, CatalogoService>();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
