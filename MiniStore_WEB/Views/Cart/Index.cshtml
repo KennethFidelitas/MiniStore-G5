@@ -47,7 +47,14 @@
                             <tr>
                                 <td>@item.NombreProducto</td>
                                 <td>₡@item.PrecioUnitario.ToString("N2")</td>
-                                <td>@item.Cantidad</td>
+                                <td>
+                                    <form asp-action="ActualizarCantidad" method="post" class="d-flex gap-2 align-items-center">
+                                        <input type="hidden" name="consecutivoDetalle" value="@item.Consecutivo" />
+                                        <input type="number" name="cantidad" value="@item.Cantidad" min="1" max="@item.Stock" class="form-control" style="width:85px" />
+                                        <button class="btn btn-outline-dark btn-sm" type="submit">Actualizar</button>
+                                    </form>
+                                    <small class="text-muted">Máximo disponible: @item.Stock</small>
+                                </td>
                                 <td>₡@item.Subtotal.ToString("N2")</td>
                                 <td class="text-end">
                                     <form asp-controller="Cart" asp-action="Eliminar" method="post" class="d-inline">
@@ -70,9 +77,11 @@
                     <h3 class="text-uppercase">
                         Total: <span class="text-primary">₡@Model.Sum(i => i.Subtotal).ToString("N2")</span>
                     </h3>
-                    <a href="#" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">
-                        Finalizar compra
-                    </a>
+                    <form asp-controller="Cart" asp-action="FinalizarCompra" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">
+                            Finalizar compra
+                        </button>
+                    </form>
                 </div>
             </div>
         }

@@ -1,0 +1,13 @@
+@model PublicacionFormViewModel
+@{Layout="_AdminLayout";var edicion=Model.Publicacion.Consecutivo>0;ViewData["Title"]=edicion?"Editar publicación":"Nueva publicación";}
+<div class="admin-page-heading"><div><a class="admin-back-link" asp-action="Publicaciones">← Volver al blog</a><span class="admin-kicker">Contenido</span><h1>@(edicion?"Editar publicación":"Nueva publicación")</h1><p>La imagen se carga directamente desde el equipo.</p></div></div>
+<form asp-action="GuardarPublicacion" method="post" enctype="multipart/form-data" class="admin-product-form">
+<input asp-for="Publicacion.Consecutivo" type="hidden"/><input asp-for="Publicacion.Imagen" type="hidden"/><input asp-for="Publicacion.Estado" type="hidden"/>
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+<section class="admin-panel"><div class="admin-form-grid">
+<div class="admin-field admin-field-wide"><label asp-for="Publicacion.Titulo">Título</label><input asp-for="Publicacion.Titulo" class="form-control"/><span asp-validation-for="Publicacion.Titulo" class="text-danger"></span></div>
+<div class="admin-field admin-field-wide"><label asp-for="Publicacion.Resumen"></label><textarea asp-for="Publicacion.Resumen" class="form-control" rows="3"></textarea><span asp-validation-for="Publicacion.Resumen" class="text-danger"></span></div>
+<div class="admin-field admin-field-wide"><label asp-for="Publicacion.Contenido"></label><textarea asp-for="Publicacion.Contenido" class="form-control" rows="12"></textarea><span asp-validation-for="Publicacion.Contenido" class="text-danger"></span></div>
+<div class="admin-field admin-field-wide"><label asp-for="ArchivoImagen">Imagen</label><input asp-for="ArchivoImagen" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"/><small>JPG, PNG o WEBP; máximo 5 MB.@(edicion?" Dejá el campo vacío para conservar la imagen actual.":"")</small><span asp-validation-for="ArchivoImagen" class="text-danger"></span>@if(edicion&&!string.IsNullOrWhiteSpace(Model.Publicacion.Imagen)){<img src="~/ministore/images/@Model.Publicacion.Imagen" alt="Imagen actual" style="display:block;max-width:240px;max-height:150px;object-fit:cover;margin-top:12px"/>}</div>
+</div></section><div class="admin-form-actions"><a class="admin-cancel-button" asp-action="Publicaciones">Cancelar</a><button class="admin-primary-button">Guardar publicación</button></div></form>
+@section Scripts{<partial name="_ValidationScriptsPartial"/>}

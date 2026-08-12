@@ -25,9 +25,9 @@ namespace ProgramacionAvanzadaWebProyecto.Services
             return ObtenerAsync<ProductoModel>($"Admin/ObtenerProductoAPI/{consecutivo}");
         }
 
-        public Task<AdminServiceResponse<List<CategoriaModel>>> ListarCategoriasAsync()
+        public Task<AdminServiceResponse<List<CategoriaAdminModel>>> ListarCategoriasAsync()
         {
-            return ObtenerAsync<List<CategoriaModel>>("Admin/ListarCategoriasAPI");
+            return ObtenerAsync<List<CategoriaAdminModel>>("Admin/ListarCategoriasAPI");
         }
 
         public async Task<AdminServiceResponse<int>> GuardarProductoAsync(ProductoModel producto)
@@ -66,6 +66,88 @@ namespace ProgramacionAvanzadaWebProyecto.Services
                 Mensaje = mensaje,
                 Datos = response.IsSuccessStatusCode
             };
+        }
+
+        public Task<AdminServiceResponse<int>> GuardarCategoriaAsync(CategoriaAdminModel model) =>
+            GuardarAsync("Admin/GuardarCategoriaAPI", model, model.Consecutivo);
+
+        public async Task<AdminServiceResponse<bool>> EliminarCategoriaAsync(int id) =>
+            await EjecutarAsync(await CrearCliente().DeleteAsync($"Admin/EliminarCategoriaAPI/{id}"));
+
+        public Task<AdminServiceResponse<List<PromocionModel>>> ListarPromocionesAsync() =>
+            ObtenerAsync<List<PromocionModel>>("Admin/ListarPromocionesAPI");
+
+        public Task<AdminServiceResponse<int>> GuardarPromocionAsync(PromocionModel model) =>
+            GuardarAsync("Admin/GuardarPromocionAPI", model, model.Consecutivo);
+
+        public async Task<AdminServiceResponse<bool>> CambiarEstadoPromocionAsync(int id, bool estado)
+        {
+            using var client = CrearCliente();
+            return await EjecutarAsync(await client.PutAsJsonAsync("Admin/CambiarEstadoPromocionAPI", new { Consecutivo = id, Estado = estado }));
+        }
+
+        public Task<AdminServiceResponse<List<PedidoResumenModel>>> ListarPedidosAsync() =>
+            ObtenerAsync<List<PedidoResumenModel>>("Admin/ListarPedidosAPI");
+        public Task<AdminServiceResponse<PedidoDetalleModel>> ObtenerPedidoAsync(int id) =>
+            ObtenerAsync<PedidoDetalleModel>($"Admin/DetallePedidoAPI/{id}");
+        public async Task<AdminServiceResponse<bool>> ActualizarEstadoPedidoAsync(int id, string estado)
+        {
+            using var client = CrearCliente();
+            return await EjecutarAsync(await client.PutAsJsonAsync("Admin/ActualizarEstadoPedidoAPI", new { ConsecutivoPedido = id, Estado = estado }));
+        }
+        public Task<AdminServiceResponse<List<ClienteResumenModel>>> ListarClientesAsync() =>
+            ObtenerAsync<List<ClienteResumenModel>>("Admin/ListarClientesAPI");
+        public Task<AdminServiceResponse<List<PedidoResumenModel>>> HistorialClienteAsync(int id) =>
+            ObtenerAsync<List<PedidoResumenModel>>($"Admin/HistorialClienteAPI/{id}");
+        public async Task<AdminServiceResponse<bool>> CambiarEstadoClienteAsync(int id, bool estado)
+        {
+            using var client = CrearCliente();
+            return await EjecutarAsync(await client.PutAsJsonAsync("Admin/CambiarEstadoClienteAPI", new { ConsecutivoUsuario = id, Estado = estado }));
+        }
+        public Task<AdminServiceResponse<List<ConsultaContactoModel>>> ListarConsultasAsync() =>
+            ObtenerAsync<List<ConsultaContactoModel>>("Admin/ListarConsultasAPI");
+        public Task<AdminServiceResponse<List<PublicacionModel>>> ListarPublicacionesAsync() =>
+            ObtenerAsync<List<PublicacionModel>>("Admin/ListarPublicacionesAPI");
+        public Task<AdminServiceResponse<PublicacionModel>> ObtenerPublicacionAsync(int id) =>
+            ObtenerAsync<PublicacionModel>($"Admin/ObtenerPublicacionAPI/{id}");
+        public Task<AdminServiceResponse<int>> GuardarPublicacionAsync(PublicacionModel model) =>
+            GuardarAsync("Admin/GuardarPublicacionAPI", model, model.Consecutivo);
+        public async Task<AdminServiceResponse<bool>> EliminarPublicacionAsync(int id)
+        {
+            using var client = CrearCliente();
+            return await EjecutarAsync(await client.DeleteAsync($"Admin/EliminarPublicacionAPI/{id}"));
+        }
+        public async Task<AdminServiceResponse<bool>> CambiarEstadoPublicacionAsync(int id, bool estado)
+        {
+            using var client = CrearCliente();
+            return await EjecutarAsync(await client.PutAsJsonAsync("Admin/CambiarEstadoPublicacionAPI",
+                new { Consecutivo = id, Estado = estado }));
+        }
+        public async Task<AdminServiceResponse<bool>> ResponderComentarioAsync(int id, string contenido)
+        {
+            using var client = CrearCliente();
+            return await EjecutarAsync(await client.PostAsJsonAsync("Admin/ResponderComentarioAPI",
+                new { ConsecutivoComentarioPadre = id, Contenido = contenido }));
+        }
+        public async Task<AdminServiceResponse<bool>> EliminarComentarioAsync(int id)
+        {
+            using var client = CrearCliente();
+            return await EjecutarAsync(await client.DeleteAsync($"Admin/EliminarComentarioAPI/{id}"));
+        }
+
+        private async Task<AdminServiceResponse<int>> GuardarAsync<T>(string ruta, T model, int actual)
+        {
+            using var client = CrearCliente();
+            var response = await client.PostAsJsonAsync(ruta, model);
+            if (!response.IsSuccessStatusCode) return Fallo<int>(response.StatusCode, await LeerMensajeAsync(response));
+            var datos = await response.Content.ReadFromJsonAsync<GuardarProductoResponse>();
+            return new() { Exitoso = true, Codigo = response.StatusCode, Datos = datos?.Consecutivo ?? actual, Mensaje = datos?.Mensaje ?? "Registro guardado correctamente." };
+        }
+
+        private static async Task<AdminServiceResponse<bool>> EjecutarAsync(HttpResponseMessage response)
+        {
+            var mensaje = await LeerMensajeAsync(response);
+            return new() { Exitoso = response.IsSuccessStatusCode, Codigo = response.StatusCode, Datos = response.IsSuccessStatusCode, Mensaje = mensaje };
         }
 
         private async Task<AdminServiceResponse<T>> ObtenerAsync<T>(string ruta)

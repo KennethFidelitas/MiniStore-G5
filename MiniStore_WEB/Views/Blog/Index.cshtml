@@ -1,0 +1,4 @@
+@model List<PublicacionModel>
+@{ViewData["Title"]="Blog de tecnología";}
+<section class="padding-large"><div class="container"><div class="text-center mb-5"><h1 class="display-7 text-uppercase">Tecnología al día</h1><p>Guías y recomendaciones para aprovechar mejor tus dispositivos.</p></div>
+<div class="row g-4">@foreach(var p in Model){var img=string.IsNullOrWhiteSpace(p.Imagen)?"post-item1.jpg":p.Imagen;<article class="col-lg-4"><img class="img-fluid w-100" style="height:240px;object-fit:cover" src="~/ministore/images/@img" alt="@p.Titulo"/><small class="text-muted">@p.FechaPublicacion.ToString("dd/MM/yyyy") · @p.Autor</small><h2 class="h4 mt-2">@p.Titulo</h2><p>@p.Resumen</p><a asp-action="Detalle" asp-route-id="@p.Consecutivo">Leer publicación (@p.CantidadComentarios comentarios)</a></article>}</div></div></section>

@@ -1,0 +1,193 @@
+@model CalendarioViewModel
+@using System.Globalization
+
+@{
+    var esAdministrador = string.Equals(
+        Context.Session.GetString("NombreRol"),
+        "Administrador",
+        StringComparison.OrdinalIgnoreCase);
+    Layout = esAdministrador ? "_AdminLayout" : "_Layout";
+    ViewData["Title"] = "Calendario";
+
+    var cultura = CultureInfo.GetCultureInfo("es-CR");
+    var primerDia = Model.MesActual;
+    var diasMes = DateTime.DaysInMonth(primerDia.Year, primerDia.Month);
+    var desplazamiento = ((int)primerDia.DayOfWeek + 6) % 7;
+    var mesAnterior = primerDia.AddMonths(-1);
+    var mesSiguiente = primerDia.AddMonths(1);
+}
+
+<link rel="stylesheet" href="~/css/calendario.css" asp-append-version="true" />
+
+<section class="calendar-page">
+    <div class="calendar-heading">
+        <div>
+            <span class="calendar-kicker">Pedidos y actividades</span>
+            <h1>Calendario</h1>
+            <p>Consultá entregas estimadas y organizá tus actividades de MiniStore.</p>
+        </div>
+        <button class="btn btn-dark" type="button" data-bs-toggle="modal" data-bs-target="#eventoModal">
+            Nuevo evento
+        </button>
+    </div>
+
+    @if (TempData["MensajeExito"] != null)
+    {
+        <div class="alert alert-success">@TempData["MensajeExito"]</div>
+    }
+    @if (TempData["MensajeError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["MensajeError"]</div>
+    }
+    @if (ViewBag.Mensaje != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Mensaje</div>
+    }
+
+    <div class="calendar-legend" aria-label="Tipos de evento">
+        <span><i class="calendar-legend-personal"></i> Personal</span>
+        <span><i class="calendar-legend-customer"></i> Seguimiento de pedido</span>
+        @if (esAdministrador)
+        {
+            <span><i class="calendar-legend-admin"></i> Entrega pendiente</span>
+        }
+    </div>
+
+    <div class="calendar-card">
+        <div class="calendar-toolbar">
+            <a class="calendar-arrow"
+               asp-action="Index"
+               asp-route-anio="@mesAnterior.Year"
+               asp-route-mes="@mesAnterior.Month"
+               aria-label="Mes anterior">&#8249;</a>
+            <h2>@cultura.DateTimeFormat.GetMonthName(primerDia.Month) @primerDia.Year</h2>
+            <a class="calendar-arrow"
+               asp-action="Index"
+               asp-route-anio="@mesSiguiente.Year"
+               asp-route-mes="@mesSiguiente.Month"
+               aria-label="Mes siguiente">&#8250;</a>
+        </div>
+
+        <div class="calendar-grid calendar-weekdays" aria-hidden="true">
+            @foreach (var diaSemana in new[] { "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" })
+            {
+                <div>@diaSemana</div>
+            }
+        </div>
+
+        <div class="calendar-grid calendar-days">
+            @for (var vacio = 0; vacio < desplazamiento; vacio++)
+            {
+                <div class="calendar-day calendar-day-empty"></div>
+            }
+
+            @for (var numeroDia = 1; numeroDia <= diasMes; numeroDia++)
+            {
+                var fecha = new DateTime(primerDia.Year, primerDia.Month, numeroDia);
+                var eventosDia = Model.Eventos
+                    .Where(e => e.FechaInicio.Date <= fecha && e.FechaFin.Date >= fecha)
+                    .OrderBy(e => e.FechaInicio)
+                    .ToList();
+                var esHoy = fecha == DateTime.Today;
+
+                <div class="calendar-day @(esHoy ? "calendar-today" : string.Empty)">
+                    <span class="calendar-day-number">@numeroDia</span>
+                    <div class="calendar-events">
+                        @foreach (var evento in eventosDia)
+                        {
+                            var claseEvento = evento.TipoEvento switch
+                            {
+                                "EntregaCliente" => "calendar-event-customer",
+                                "EntregaAdmin" => "calendar-event-admin",
+                                _ => "calendar-event-personal"
+                            };
+
+                            <article class="calendar-event @claseEvento" title="@evento.Descripcion">
+                                <div>
+                                    <strong>@evento.Titulo</strong>
+                                    <span>@evento.FechaInicio.ToString("HH:mm") - @evento.FechaFin.ToString("HH:mm")</span>
+                                    @if (!string.IsNullOrWhiteSpace(evento.Descripcion))
+                                    {
+                                        <small>@evento.Descripcion</small>
+                                    }
+                                    @if (evento.ConsecutivoPedido.HasValue && !string.IsNullOrWhiteSpace(evento.EstadoPedido))
+                                    {
+                                        <span class="calendar-order-status">Estado: @evento.EstadoPedido</span>
+                                    }
+                                </div>
+                                @if (!evento.EsEventoSistema)
+                                {
+                                    <form asp-action="EliminarEvento" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="consecutivo" value="@evento.Consecutivo" />
+                                        <input type="hidden" name="anio" value="@primerDia.Year" />
+                                        <input type="hidden" name="mes" value="@primerDia.Month" />
+                                        <button type="submit" aria-label="Eliminar @evento.Titulo" title="Eliminar">&times;</button>
+                                    </form>
+                                }
+                            </article>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="eventoModal" tabindex="-1" aria-labelledby="eventoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="GuardarEvento" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h2 class="modal-title fs-5" id="eventoModalLabel">Nuevo evento</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="NuevoEvento.Titulo" class="form-label"></label>
+                        <input asp-for="NuevoEvento.Titulo" class="form-control" />
+                        <span asp-validation-for="NuevoEvento.Titulo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="NuevoEvento.Descripcion" class="form-label"></label>
+                        <textarea asp-for="NuevoEvento.Descripcion" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="NuevoEvento.Descripcion" class="text-danger"></span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="NuevoEvento.FechaInicio" class="form-label"></label>
+                            <input asp-for="NuevoEvento.FechaInicio" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="NuevoEvento.FechaInicio" class="text-danger"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="NuevoEvento.FechaFin" class="form-label"></label>
+                            <input asp-for="NuevoEvento.FechaFin" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="NuevoEvento.FechaFin" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-dark">Guardar evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                bootstrap.Modal.getOrCreateInstance(document.getElementById("eventoModal")).show();
+            });
+        </script>
+    }
+}

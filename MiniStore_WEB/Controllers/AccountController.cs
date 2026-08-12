@@ -19,8 +19,15 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Login(UsuarioModel model)
         {
+            ModelState.Remove(nameof(UsuarioModel.Nombre));
+            ModelState.Remove(nameof(UsuarioModel.ConfirmarContrasenna));
+
+            if (!ModelState.IsValid)
+                return View(model);
+
             using var client = _http.CreateClient();
             var url = _config["Valores:UrlApi"] + "Home/IniciarSesionAPI";
             var response = client.PostAsJsonAsync(url, model).Result;
@@ -75,8 +82,17 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Register(UsuarioModel model)
         {
+            if (!string.IsNullOrEmpty(model.Contrasenna) && model.Contrasenna.Length < 8)
+                ModelState.AddModelError(
+                    nameof(UsuarioModel.Contrasenna),
+                    "La contraseña debe tener al menos 8 caracteres");
+
+            if (!ModelState.IsValid)
+                return View(model);
+
             if (model.Contrasenna != model.ConfirmarContrasenna)
             {
                 ViewBag.Mensaje = "Las contraseñas no coinciden";
@@ -113,8 +129,16 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult RecuperarCuenta(UsuarioModel model)
         {
+            ModelState.Remove(nameof(UsuarioModel.Nombre));
+            ModelState.Remove(nameof(UsuarioModel.Contrasenna));
+            ModelState.Remove(nameof(UsuarioModel.ConfirmarContrasenna));
+
+            if (!ModelState.IsValid)
+                return View(model);
+
             using var client = _http.CreateClient();
             var url = _config["Valores:UrlApi"] + "Home/RecuperarAccesoAPI";
             var response = client.PostAsJsonAsync(url, model).Result;

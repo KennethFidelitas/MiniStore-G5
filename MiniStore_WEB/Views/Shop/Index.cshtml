@@ -5,6 +5,7 @@
     var categorias = ViewBag.Categorias as List<CategoriaModel>
         ?? new List<CategoriaModel>();
     int? categoriaSeleccionada = ViewBag.CategoriaSeleccionada;
+    string busqueda = ViewBag.Busqueda as string ?? string.Empty;
 }
 
 <section class="product-store padding-large">
@@ -29,7 +30,11 @@
               asp-action="Index"
               method="get"
               class="row g-3 mb-5">
-            <div class="col-md-9">
+            <div class="col-md-5">
+                <label for="buscar" class="form-label">Buscar producto</label>
+                <input id="buscar" name="buscar" value="@busqueda" class="form-control" placeholder="Ej. laptop, teléfono..." />
+            </div>
+            <div class="col-md-4">
                 <label for="categoria" class="form-label">Categoría</label>
                 <select id="categoria" name="categoria" class="form-select">
                     <option value="">Todas las categorías</option>
@@ -58,7 +63,7 @@
         @if (Model.Count == 0)
         {
             <div class="alert alert-info">
-                No se encontraron productos disponibles.
+                @(string.IsNullOrWhiteSpace(busqueda) ? "No se encontraron productos disponibles." : $"No encontramos productos que coincidan con “{busqueda}”.")
             </div>
         }
         else
@@ -72,21 +77,23 @@
 
                     <div class="col-lg-3 col-md-6">
                         <div class="product-card position-relative">
-                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@producto.Consecutivo">
-                                <div class="image-holder">
-                                    <img src="@rutaImagen"
-                                         alt="@producto.Nombre"
-                                         class="img-fluid"
-                                         onerror="this.onerror=null;this.src='@Url.Content("~/ministore/images/product-item1.jpg")';" />
-                                </div>
-                            </a>
-                            <div class="cart-concern position-absolute">
-                                <div class="cart-button d-flex">
-                                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@producto.Consecutivo"
-                                       class="btn btn-medium btn-black">
-                                        Ver detalle
-                                        <svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg>
-                                    </a>
+                            <div class="catalog-product-media position-relative">
+                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@producto.Consecutivo">
+                                    <div class="image-holder">
+                                        <img src="@rutaImagen"
+                                             alt="@producto.Nombre"
+                                             class="img-fluid"
+                                             onerror="this.onerror=null;this.src='@Url.Content("~/ministore/images/product-item1.jpg")';" />
+                                    </div>
+                                </a>
+                                <div class="cart-concern position-absolute">
+                                    <div class="cart-button d-flex">
+                                        <a asp-controller="Shop" asp-action="Details" asp-route-id="@producto.Consecutivo"
+                                           class="btn btn-medium btn-black">
+                                            Ver detalle
+                                            <svg class="cart-outline"><use xlink:href="#cart-outline"></use></svg>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-detail pt-3">
@@ -95,7 +102,11 @@
                                     <a asp-controller="Shop" asp-action="Details" asp-route-id="@producto.Consecutivo">@producto.Nombre</a>
                                 </h3>
                                 <p class="mb-1 small text-muted">Stock: @producto.Stock</p>
-                                <span class="item-price text-primary">₡@producto.Precio.ToString("N2")</span>
+                                @if (producto.PorcentajeDescuento > 0)
+                                {
+                                    <div><del class="text-muted">₡@producto.Precio.ToString("N2")</del> <span class="badge bg-danger">-@producto.PorcentajeDescuento.ToString("0.#")%</span></div>
+                                }
+                                <span class="item-price text-primary">₡@((producto.PrecioFinal > 0 ? producto.PrecioFinal : producto.Precio).ToString("N2"))</span>
                             </div>
                         </div>
                     </div>

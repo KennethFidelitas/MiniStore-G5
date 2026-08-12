@@ -27,6 +27,18 @@
                     <span class="admin-nav-icon">□</span>
                     Productos
                 </a>
+                <a class="admin-nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Calendario" ? "active" : "")"
+                   asp-controller="Calendario" asp-action="Index">
+                    <span class="admin-nav-icon">&#128197;</span>
+                    Calendario
+                </a>
+                <span class="admin-nav-title">Gestión</span>
+                <a class="admin-nav-link" asp-controller="Admin" asp-action="Categorias"><span class="admin-nav-icon">#</span>Categorías</a>
+                <a class="admin-nav-link" asp-controller="Admin" asp-action="Promociones"><span class="admin-nav-icon">%</span>Promociones</a>
+                <a class="admin-nav-link" asp-controller="Admin" asp-action="Pedidos"><span class="admin-nav-icon">▣</span>Pedidos</a>
+                <a class="admin-nav-link" asp-controller="Admin" asp-action="Clientes"><span class="admin-nav-icon">◉</span>Clientes</a>
+                <a class="admin-nav-link" asp-controller="Admin" asp-action="Consultas"><span class="admin-nav-icon">✉</span>Consultas</a>
+                <a class="admin-nav-link" asp-controller="Admin" asp-action="Publicaciones"><span class="admin-nav-icon">B</span>Blog</a>
             </nav>
 
             <div class="admin-sidebar-footer">

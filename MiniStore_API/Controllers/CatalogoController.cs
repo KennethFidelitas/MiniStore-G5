@@ -11,12 +11,15 @@ namespace MiniStore_API.Controllers
     public class CatalogoController(IConfiguration configuration) : ControllerBase
     {
         [HttpGet("ListarProductosAPI")]
-        public IActionResult ListarProductosAPI()
+        public IActionResult ListarProductosAPI([FromQuery] string? buscar = null)
         {
             using var conexion = CrearConexion();
 
+            var parametros = new DynamicParameters();
+            parametros.Add("@Busqueda", buscar);
             var productos = conexion.Query<ProductoResponseModel>(
-                "spListarProductos",
+                "spBuscarProductos",
+                parametros,
                 commandType: CommandType.StoredProcedure
             ).ToList();
 
@@ -50,7 +53,7 @@ namespace MiniStore_API.Controllers
                 commandType: CommandType.StoredProcedure
             );
 
-            if (producto == null)
+            if (producto == null || !producto.Estado)
                 return NotFound("No se encontró el producto solicitado.");
 
             return Ok(producto);

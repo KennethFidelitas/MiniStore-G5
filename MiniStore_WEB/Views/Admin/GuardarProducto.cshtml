@@ -18,10 +18,12 @@
 <form asp-controller="Admin"
       asp-action="GuardarProducto"
       method="post"
+      enctype="multipart/form-data"
       class="admin-product-form">
     @Html.AntiForgeryToken()
     <input asp-for="Producto.Consecutivo" type="hidden" />
     <input asp-for="Producto.Estado" type="hidden" />
+    <input asp-for="Producto.Imagen" type="hidden" />
 
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
@@ -68,9 +70,10 @@
             </div>
 
             <div class="admin-field">
-                <label asp-for="Producto.Imagen">Ruta de imagen</label>
-                <input asp-for="Producto.Imagen" class="form-control" placeholder="images/producto.jpg" />
-                <span asp-validation-for="Producto.Imagen" class="text-danger"></span>
+                <label asp-for="ArchivoImagen">Imagen del producto</label>
+                <input asp-for="ArchivoImagen" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+                <small>JPG, PNG o WEBP. Máximo 5 MB. Si no elegís otra se conserva la actual.</small>
+                <span asp-validation-for="ArchivoImagen" class="text-danger"></span>
             </div>
 
             <div class="admin-field admin-field-wide">

@@ -4,7 +4,7 @@ namespace ProgramacionAvanzadaWebProyecto.Services
 {
     public interface ICatalogoService
     {
-        Task<AdminServiceResponse<List<ProductoModel>>> ListarProductosAsync();
+        Task<AdminServiceResponse<List<ProductoModel>>> ListarProductosAsync(string? buscar = null);
 
         Task<AdminServiceResponse<List<CategoriaModel>>> ListarCategoriasAsync();
 

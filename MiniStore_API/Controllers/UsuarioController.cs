@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using MiniStore_API.Models;
+using MiniStore_API.Services;
 
 
 namespace MiniStore_API.Controllers
@@ -10,15 +11,15 @@ namespace MiniStore_API.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UsuarioController(IConfiguration _config) : ControllerBase
+    public class UsuarioController(IConfiguration _config, IUtilesService _utiles) : ControllerBase
     {
         [HttpGet("ConsultarUsuarioAPI")]
-        public IActionResult ConsultarUsuarioAPI(int consecutivo)
+        public IActionResult ConsultarUsuarioAPI()
         {
             using var context = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]);
 
             var parameters = new DynamicParameters();
-            parameters.Add("@Consecutivo", consecutivo);
+            parameters.Add("@Consecutivo", _utiles.ObtenerConsecutivoToken());
             var response = context.QueryFirstOrDefault<UsuarioResponseModel>("spConsultarUsuario", parameters);
 
             if (response != null)
@@ -37,7 +38,7 @@ namespace MiniStore_API.Controllers
             using var context = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]);
 
             var parameters = new DynamicParameters();
-            parameters.Add("@Consecutivo", model.Consecutivo);
+            parameters.Add("@Consecutivo", _utiles.ObtenerConsecutivoToken());
             parameters.Add("@Contrasenna", model.Contrasenna);
             parameters.Add("@IndicadorTemp", false);
             var response = context.Execute("spActualizarContrasenna", parameters);
@@ -56,7 +57,7 @@ namespace MiniStore_API.Controllers
             using var context = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]);
 
             var parameters = new DynamicParameters();
-            parameters.Add("@Consecutivo", model.Consecutivo);
+            parameters.Add("@Consecutivo", _utiles.ObtenerConsecutivoToken());
             parameters.Add("@Nombre", model.Nombre);
             parameters.Add("@CorreoElectronico", model.CorreoElectronico);
             var response = context.Execute("spActualizarPerfil", parameters);

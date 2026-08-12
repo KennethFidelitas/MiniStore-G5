@@ -1,0 +1,53 @@
+@model PedidoCreadoModel
+
+@{
+    ViewData["Title"] = "Pedido confirmado";
+}
+
+<section class="order-confirmation padding-large bg-light">
+    <div class="container">
+        <div class="order-confirmation-card mx-auto text-center">
+            <div class="order-confirmation-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img">
+                    <path d="M20 6 9 17l-5-5" />
+                </svg>
+            </div>
+
+            <span class="order-confirmation-kicker text-uppercase">Compra completada</span>
+            <h1 class="display-7 text-uppercase text-dark mt-2">¡Pedido confirmado!</h1>
+            <p class="order-confirmation-message mx-auto">
+                Gracias por comprar en MiniStore. Recibimos tu pedido y ya preparamos su seguimiento.
+            </p>
+
+            <div class="order-confirmation-summary text-start">
+                <div>
+                    <span>Número de pedido</span>
+                    <strong>#@Model.ConsecutivoPedido</strong>
+                </div>
+                <div>
+                    <span>Entrega estimada</span>
+                    <strong>@Model.FechaEntregaEstimada.ToString("dd/MM/yyyy")</strong>
+                </div>
+                <div>
+                    <span>Estado</span>
+                    <strong class="text-primary">Confirmado</strong>
+                </div>
+            </div>
+
+            <p class="order-confirmation-note mb-0">
+                Podés consultar el avance y la información de entrega desde el apartado Seguimiento.
+            </p>
+
+            <div class="d-flex justify-content-center flex-wrap gap-3 mt-4">
+                <a asp-controller="Shop" asp-action="Index"
+                   class="btn btn-medium btn-dark text-uppercase btn-rounded-none">
+                    Volver al catálogo
+                </a>
+                <a asp-controller="Calendario" asp-action="Index"
+                   class="btn btn-medium btn-outline-dark text-uppercase btn-rounded-none">
+                    Ver seguimiento
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

@@ -73,6 +73,46 @@ namespace ProgramacionAvanzadaWebProyecto.Services
             };
         }
 
+        public async Task<CarritoServiceResponse<bool>> ActualizarCantidadAsync(int consecutivoDetalle, int cantidad)
+        {
+            using var client = CrearCliente();
+            var response = await client.PutAsJsonAsync("Carrito/ActualizarCantidadAPI",
+                new { ConsecutivoDetalle = consecutivoDetalle, Cantidad = cantidad });
+            var mensaje = await LeerMensajeAsync(response);
+            return new CarritoServiceResponse<bool>
+            {
+                Exitoso = response.IsSuccessStatusCode,
+                Codigo = response.StatusCode,
+                Mensaje = mensaje,
+                Datos = response.IsSuccessStatusCode
+            };
+        }
+
+        public async Task<CarritoServiceResponse<PedidoCreadoModel>> FinalizarCompraAsync()
+        {
+            using var client = CrearCliente();
+            var response = await client.PostAsync("Carrito/FinalizarCompraAPI", null);
+            var mensaje = await LeerMensajeAsync(response);
+
+            if (!response.IsSuccessStatusCode)
+                return Fallo<PedidoCreadoModel>(response.StatusCode, mensaje);
+
+            var datos = await response.Content.ReadFromJsonAsync<FinalizarCompraResponse>();
+            return new CarritoServiceResponse<PedidoCreadoModel>
+            {
+                Exitoso = true,
+                Codigo = response.StatusCode,
+                Mensaje = datos?.Mensaje ?? "Compra finalizada correctamente.",
+                Datos = datos == null
+                    ? null
+                    : new PedidoCreadoModel
+                    {
+                        ConsecutivoPedido = datos.ConsecutivoPedido,
+                        FechaEntregaEstimada = datos.FechaEntregaEstimada
+                    }
+            };
+        }
+
         private HttpClient CrearCliente()
         {
             var client = httpClientFactory.CreateClient();
@@ -100,6 +140,13 @@ namespace ProgramacionAvanzadaWebProyecto.Services
         {
             var contenido = await response.Content.ReadAsStringAsync();
             return contenido.Trim('"');
+        }
+
+        private sealed class FinalizarCompraResponse
+        {
+            public int ConsecutivoPedido { get; set; }
+            public DateTime FechaEntregaEstimada { get; set; }
+            public string Mensaje { get; set; } = string.Empty;
         }
     }
 }

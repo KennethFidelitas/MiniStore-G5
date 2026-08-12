@@ -1,0 +1,7 @@
+@model List<PedidoResumenModel>
+@{ ViewData["Title"]="Mis pedidos"; }
+<section class="padding-large"><div class="container"><h1 class="display-7 text-uppercase">Mis pedidos</h1><p class="mb-5">Consultá el estado y la entrega estimada de cada compra.</p>
+@if(ViewBag.Error!=null){<div class="alert alert-danger">@ViewBag.Error</div>}
+@if(!Model.Any()){<div class="alert alert-info">Todavía no tenés pedidos.</div>}else{<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Pedido</th><th>Fecha</th><th>Productos</th><th>Total</th><th>Estado</th><th>Entrega estimada</th><th></th></tr></thead><tbody>
+@foreach(var p in Model){<tr><td>#@p.Consecutivo</td><td>@p.FechaPedido.ToString("dd/MM/yyyy")</td><td>@p.CantidadProductos</td><td>₡@p.Total.ToString("N2")</td><td><span class="badge bg-dark">@p.Estado</span></td><td>@p.FechaEntregaEstimada?.ToString("dd/MM/yyyy")</td><td><a asp-action="Detalle" asp-route-id="@p.Consecutivo">Ver detalle</a></td></tr>}
+</tbody></table></div>}</div></section>

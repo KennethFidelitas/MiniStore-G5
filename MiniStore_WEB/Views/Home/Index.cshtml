@@ -117,7 +117,7 @@
                             : Url.Content($"~/ministore/images/{producto.Imagen.TrimStart('/', '\\')}");
 
                         <div class="col-lg-3 col-md-6">
-                            <div class="product-card position-relative">
+                            <div class="product-card featured-product-card position-relative">
                                 <a asp-controller="Shop" asp-action="Details" asp-route-id="@producto.Consecutivo">
                                     <div class="image-holder">
                                         <img src="@rutaImagen" alt="@producto.Nombre" class="img-fluid"
@@ -133,17 +133,146 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="card-detail d-flex justify-content-between align-items-baseline pt-3">
+                                <div class="card-detail featured-product-info pt-3">
                                     <h3 class="card-title text-uppercase">
                                         <a asp-controller="Shop" asp-action="Details" asp-route-id="@producto.Consecutivo">@producto.Nombre</a>
                                     </h3>
-                                    <span class="item-price text-primary">₡@producto.Precio.ToString("N2")</span>
+                                    <div class="featured-product-price">
+                                        @if(producto.PorcentajeDescuento > 0){<del class="text-muted">₡@producto.Precio.ToString("N2")</del><span class="badge bg-danger">-@producto.PorcentajeDescuento.ToString("0.#")%</span>}
+                                        <span class="item-price text-primary">₡@((producto.PrecioFinal > 0 ? producto.PrecioFinal : producto.Precio).ToString("N2"))</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     }
                 </div>
             }
+        </div>
+    </div>
+</section>
+
+
+<section id="como-comprar" class="shopping-guide padding-large bg-light">
+    <div class="container">
+        <div class="text-center mx-auto mb-5 shopping-guide-heading">
+            <span class="text-primary text-uppercase">Una experiencia sencilla</span>
+            <h2 class="display-7 text-dark text-uppercase mt-2">Comprar es muy fácil</h2>
+            <p class="text-muted mb-0">
+                Elegí lo que necesitás, confirmá tus datos y consultá el avance de tu pedido desde un solo lugar.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <article class="shopping-step">
+                    <span class="shopping-step-number">01</span>
+                    <h3 class="text-uppercase text-dark">Explorá el catálogo</h3>
+                    <p>
+                        Revisá los productos disponibles, su categoría, precio y existencias antes de elegir.
+                    </p>
+                    <a asp-controller="Shop" asp-action="Index" class="text-uppercase text-decoration-underline">
+                        Ver productos
+                    </a>
+                </article>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <article class="shopping-step">
+                    <span class="shopping-step-number">02</span>
+                    <h3 class="text-uppercase text-dark">Confirmá tu pedido</h3>
+                    <p>
+                        Agregá productos al carrito, verificá las cantidades y completá la información de entrega.
+                    </p>
+                    <a asp-controller="Cart" asp-action="Index" class="text-uppercase text-decoration-underline">
+                        Ir al carrito
+                    </a>
+                </article>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <article class="shopping-step">
+                    <span class="shopping-step-number">03</span>
+                    <h3 class="text-uppercase text-dark">Seguí la entrega</h3>
+                    <p>
+                        Al finalizar se genera el seguimiento con una fecha estimada de entrega de 7 días hábiles.
+                    </p>
+                    <a asp-controller="Calendario" asp-action="Index" class="text-uppercase text-decoration-underline">
+                        Consultar seguimiento
+                    </a>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="preguntas-frecuentes" class="padding-large">
+    <div class="container">
+        <div class="row g-5 align-items-start">
+            <div class="col-lg-5">
+                <span class="text-primary text-uppercase">Información útil</span>
+                <h2 class="display-7 text-dark text-uppercase mt-2">Preguntas frecuentes</h2>
+                <p class="text-muted">
+                    Todo lo esencial para comprar y consultar tus pedidos en MiniStore.
+                </p>
+                <a href="#footer-contact" class="btn btn-medium btn-dark text-uppercase btn-rounded-none">
+                    Contáctanos
+                </a>
+            </div>
+            <div class="col-lg-7">
+                <div class="accordion accordion-flush" id="homeFaq">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faqEntrega" aria-expanded="true" aria-controls="faqEntrega">
+                                ¿Cuándo recibiré mi pedido?
+                            </button>
+                        </h3>
+                        <div id="faqEntrega" class="accordion-collapse collapse show" data-bs-parent="#homeFaq">
+                            <div class="accordion-body">
+                                La entrega se programa para 7 días hábiles después de confirmar la compra.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faqSeguimiento" aria-expanded="false" aria-controls="faqSeguimiento">
+                                ¿Dónde consulto el seguimiento?
+                            </button>
+                        </h3>
+                        <div id="faqSeguimiento" class="accordion-collapse collapse" data-bs-parent="#homeFaq">
+                            <div class="accordion-body">
+                                Iniciá sesión y entrá en “Seguimiento” para ver el número de pedido, los productos y la fecha estimada.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faqDisponibilidad" aria-expanded="false" aria-controls="faqDisponibilidad">
+                                ¿Cómo sé si un producto está disponible?
+                            </button>
+                        </h3>
+                        <div id="faqDisponibilidad" class="accordion-collapse collapse" data-bs-parent="#homeFaq">
+                            <div class="accordion-body">
+                                El catálogo muestra las existencias actuales de cada producto antes de agregarlo al carrito.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faqConfirmacion" aria-expanded="false" aria-controls="faqConfirmacion">
+                                ¿Qué sucede al finalizar la compra?
+                            </button>
+                        </h3>
+                        <div id="faqConfirmacion" class="accordion-collapse collapse" data-bs-parent="#homeFaq">
+                            <div class="accordion-body">
+                                Se registra el pedido y se crea automáticamente su evento de entrega para que puedas darle seguimiento.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

@@ -4,7 +4,7 @@ using Microsoft.Data.SqlClient;
 
 namespace MiniStore_API.Controllers
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Administrador")]
     [Route("api/[controller]")]
     [ApiController]
     public class DiagnosticoController(IConfiguration _config) : ControllerBase
@@ -28,12 +28,7 @@ namespace MiniStore_API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    Conexion = "FALLÓ",
-                    CadenaUsada = cadena,
-                    Error = ex.Message
-                });
+                throw new InvalidOperationException("No fue posible validar la conexión con la base de datos", ex);
             }
         }
     }

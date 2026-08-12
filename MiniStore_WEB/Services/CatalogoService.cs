@@ -10,10 +10,12 @@ namespace ProgramacionAvanzadaWebProyecto.Services
         IConfiguration configuration,
         IHttpContextAccessor httpContextAccessor) : ICatalogoService
     {
-        public Task<AdminServiceResponse<List<ProductoModel>>> ListarProductosAsync()
+        public Task<AdminServiceResponse<List<ProductoModel>>> ListarProductosAsync(string? buscar = null)
         {
             return ObtenerAsync<List<ProductoModel>>(
-                "Catalogo/ListarProductosAPI"
+                "Catalogo/ListarProductosAPI" + (string.IsNullOrWhiteSpace(buscar)
+                    ? string.Empty
+                    : $"?buscar={Uri.EscapeDataString(buscar.Trim())}")
             );
         }
 

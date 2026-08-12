@@ -49,7 +49,8 @@
                 </h1>
 
                 <h2 class="text-primary mt-4">
-                    ₡@Model.Precio.ToString("N2")
+                    @if(Model.PorcentajeDescuento > 0){<del class="text-muted me-2">₡@Model.Precio.ToString("N2")</del><span class="badge bg-danger me-2">-@Model.PorcentajeDescuento.ToString("0.#")%</span>}
+                    ₡@((Model.PrecioFinal > 0 ? Model.PrecioFinal : Model.Precio).ToString("N2"))
                 </h2>
 
                 <p class="lead mt-4">

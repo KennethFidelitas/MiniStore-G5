@@ -12,6 +12,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICatalogoService, CatalogoService>();
 builder.Services.AddScoped<ICarritoService, CarritoService>();
+builder.Services.AddScoped<IPedidosService, PedidosService>();
+builder.Services.AddScoped<IContenidoService, ContenidoService>();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

@@ -29,5 +29,7 @@ namespace ProgramacionAvanzadaWebProyecto.Models
 
         public string NombreCategoria { get; set; } = string.Empty;
         public bool Estado { get; set; } = true;
+        public decimal PorcentajeDescuento { get; set; }
+        public decimal PrecioFinal { get; set; }
     }
 }

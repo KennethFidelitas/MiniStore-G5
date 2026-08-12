@@ -1,0 +1,20 @@
+@model PublicacionModel
+@{ViewData["Title"]=Model.Titulo;}
+<section class="padding-large"><article class="container" style="max-width:900px"><a asp-action="Index">← Volver al blog</a><h1 class="display-6 mt-4">@Model.Titulo</h1><p class="text-muted">Por @Model.Autor · @Model.FechaPublicacion.ToString("dd/MM/yyyy")</p>@if(!string.IsNullOrWhiteSpace(Model.Imagen)){<img class="img-fluid w-100 my-4" style="max-height:460px;object-fit:cover" src="~/ministore/images/@Model.Imagen" alt="@Model.Titulo"/>}<div class="fs-5" style="white-space:pre-line">@Model.Contenido</div><hr class="my-5"/><h2 class="h3">Comentarios</h2>
+@if(TempData["Mensaje"]!=null){<div class="alert alert-success">@TempData["Mensaje"]</div>}@if(TempData["Error"]!=null){<div class="alert alert-danger">@TempData["Error"]</div>}
+@foreach(var c in Model.Comentarios){<div class="border-bottom py-3 @(c.EsRespuestaAdmin ? "ms-4 ps-3 border-start" : "")"><strong>@c.NombreAutor @(c.EsRespuestaAdmin ? "· MiniStore" : "")</strong><small class="text-muted float-end">@c.FechaComentario.ToString("dd/MM/yyyy HH:mm")</small><p class="mb-0">@c.Contenido</p></div>}
+@if (Context.Session.GetString("Autenticado") == "1")
+{
+    <form asp-action="Comentar" method="post" class="mt-4">
+        <input type="hidden" name="ConsecutivoPublicacion" value="@Model.Consecutivo" />
+        <input type="hidden" name="NombreAutor" value="@Context.Session.GetString("Nombre")" />
+        <p class="mb-2">Comentando como <strong>@Context.Session.GetString("Nombre")</strong></p>
+        <div class="mb-3"><label class="form-label">Comentario</label><textarea name="Contenido" class="form-control" rows="4" required maxlength="1000"></textarea></div>
+        <button class="btn btn-dark">Publicar comentario</button>
+    </form>
+}
+else
+{
+    <div class="alert alert-light border mt-4">Para participar en la conversación debés <a asp-controller="Account" asp-action="Login">iniciar sesión</a>.</div>
+}
+</article></section>

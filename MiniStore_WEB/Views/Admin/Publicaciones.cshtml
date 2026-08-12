@@ -1,0 +1,72 @@
+@model List<PublicacionModel>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Administrar blog";
+}
+
+<div class="admin-page-heading">
+    <div>
+        <span class="admin-kicker">Contenido</span>
+        <h1>Blog</h1>
+        <p>Creá publicaciones y administrá la conversación con los clientes.</p>
+    </div>
+    <a class="admin-primary-button" asp-action="GuardarPublicacion">+ Nueva publicación</a>
+</div>
+
+@if (TempData["MensajeExito"] != null)
+{
+    <div class="alert alert-success">@TempData["MensajeExito"]</div>
+}
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alert-danger">@TempData["MensajeError"]</div>
+}
+
+<section class="admin-panel">
+    <div class="table-responsive">
+        <table class="table admin-table align-middle">
+            <thead>
+                <tr>
+                    <th>Publicación</th>
+                    <th>Autor</th>
+                    <th>Fecha</th>
+                    <th>Comentarios</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var publicacion in Model)
+                {
+                    <tr>
+                        <td><strong>@publicacion.Titulo</strong><br /><small>@publicacion.Resumen</small></td>
+                        <td>@publicacion.Autor</td>
+                        <td>@publicacion.FechaPublicacion.ToString("dd/MM/yyyy")</td>
+                        <td>@publicacion.CantidadComentarios</td>
+                        <td>
+                            <span class="admin-status @(publicacion.Estado ? "active" : "inactive")">
+                                @(publicacion.Estado ? "Publicada" : "Eliminada")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="admin-row-actions">
+                                <a asp-action="GuardarPublicacion" asp-route-id="@publicacion.Consecutivo">Editar</a>
+                                <a asp-action="ComentariosPublicacion" asp-route-id="@publicacion.Consecutivo">Comentarios</a>
+                                <form asp-action="CambiarEstadoPublicacion" method="post">
+                                    <input type="hidden" name="id" value="@publicacion.Consecutivo" />
+                                    <button type="submit"
+                                            name="accion"
+                                            value="@(publicacion.Estado ? "eliminar" : "restaurar")"
+                                            class="@(publicacion.Estado ? "danger" : "success")"
+                                            onclick="return confirm('¿Confirmás que querés @(publicacion.Estado ? "eliminar" : "restaurar") esta publicación?');">
+                                        @(publicacion.Estado ? "Eliminar" : "Restaurar")
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

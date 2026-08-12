@@ -1,0 +1,72 @@
+@model List<ClienteResumenModel>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="admin-page-heading">
+    <div>
+        <span class="admin-kicker">Usuarios</span>
+        <h1>Clientes</h1>
+        <p>Información básica, compras y acceso a la plataforma.</p>
+    </div>
+</div>
+
+@if (TempData["MensajeExito"] != null)
+{
+    <div class="alert alert-success">@TempData["MensajeExito"]</div>
+}
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alert-danger">@TempData["MensajeError"]</div>
+}
+
+<section class="admin-panel">
+    <div class="table-responsive">
+        <table class="table admin-table align-middle">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Registro</th>
+                    <th>Pedidos</th>
+                    <th>Total comprado</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cliente in Model)
+                {
+                    <tr>
+                        <td><strong>@cliente.Nombre</strong><br /><small>@cliente.CorreoElectronico</small></td>
+                        <td>@cliente.FechaRegistro.ToString("dd/MM/yyyy")</td>
+                        <td>@cliente.CantidadPedidos</td>
+                        <td>₡@cliente.TotalCompras.ToString("N2")</td>
+                        <td>
+                            <span class="admin-status @(cliente.Estado ? "active" : "inactive")">
+                                @(cliente.Estado ? "Activo" : "Inactivo")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="admin-row-actions">
+                                <a asp-action="HistorialCliente"
+                                   asp-route-id="@cliente.Consecutivo"
+                                   asp-route-nombre="@cliente.Nombre">Historial</a>
+                                <form asp-action="CambiarEstadoCliente" method="post">
+                                    <input type="hidden" name="id" value="@cliente.Consecutivo" />
+                                    <button type="submit"
+                                            name="accion"
+                                            value="@(cliente.Estado ? "desactivar" : "activar")"
+                                            class="@(cliente.Estado ? "danger" : "success")"
+                                            onclick="return confirm('¿Confirmás que querés @(cliente.Estado ? "desactivar" : "activar") esta cuenta?');">
+                                        @(cliente.Estado ? "Desactivar" : "Activar")
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

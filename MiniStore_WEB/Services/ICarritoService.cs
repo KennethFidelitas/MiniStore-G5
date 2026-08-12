@@ -6,7 +6,9 @@ namespace ProgramacionAvanzadaWebProyecto.Services
     {
         Task<CarritoServiceResponse<List<CarritoItemModel>>> ObtenerCarritoAsync();
         Task<CarritoServiceResponse<bool>> AgregarProductoAsync(int consecutivoProducto, int cantidad);
+        Task<CarritoServiceResponse<bool>> ActualizarCantidadAsync(int consecutivoDetalle, int cantidad);
         Task<CarritoServiceResponse<bool>> EliminarProductoAsync(int consecutivoDetalle);
         Task<CarritoServiceResponse<bool>> VaciarCarritoAsync();
+        Task<CarritoServiceResponse<PedidoCreadoModel>> FinalizarCompraAsync();
     }
 }

@@ -1,0 +1,3 @@
+@model List<ConsultaContactoModel>
+@{Layout="_AdminLayout";ViewData["Title"]="Consultas";}
+<div class="admin-page-heading"><div><span class="admin-kicker">Atención</span><h1>Consultas de contacto</h1><p>Mensajes enviados desde el formulario público.</p></div></div><section class="admin-panel"><div class="table-responsive"><table class="table admin-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Asunto</th><th>Mensaje</th><th>Estado</th></tr></thead><tbody>@foreach(var c in Model){<tr><td>@c.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</td><td><strong>@c.Nombre</strong><br/><a href="mailto:@c.CorreoElectronico">@c.CorreoElectronico</a></td><td>@c.Asunto</td><td style="max-width:420px">@c.Mensaje</td><td>@c.Estado</td></tr>}</tbody></table></div></section>

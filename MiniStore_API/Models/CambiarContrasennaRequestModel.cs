@@ -6,6 +6,7 @@ namespace MiniStore_API.Models
         [Required]
         public int Consecutivo { get; set; }
         [Required]
+        [StringLength(100, MinimumLength = 8)]
         public string Contrasenna { get; set; } = string.Empty;
     }
 }

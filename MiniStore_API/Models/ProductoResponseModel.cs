@@ -11,5 +11,7 @@ namespace MiniStore_API.Models
         public int ConsecutivoCategoria { get; set; }
         public string NombreCategoria { get; set; } = string.Empty;
         public bool Estado { get; set; }
+        public decimal PorcentajeDescuento { get; set; }
+        public decimal PrecioFinal { get; set; }
     }
 }

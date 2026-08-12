@@ -81,6 +81,14 @@ namespace MiniStore_API.Controllers
                 plantilla = plantilla.Replace("{{COMPANYNAME}}", "MiniStore.");
                 plantilla = plantilla.Replace("{{YEAR}}", "2026");
 
+                var urlBaseWeb = _config["AplicacionWeb:UrlBase"]?.TrimEnd('/');
+                if (string.IsNullOrWhiteSpace(urlBaseWeb))
+                    throw new InvalidOperationException("La URL de la aplicación web no está configurada.");
+
+                plantilla = plantilla.Replace(
+                    "{{LOGIN_URL}}",
+                    $"{urlBaseWeb}/Account/Login");
+
                 await _utiles.EnviarCorreoAsync(model.CorreoElectronico, "Recuperación de acceso", plantilla);
                 return Ok(response);
             }

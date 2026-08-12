@@ -7,10 +7,10 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
     public class ShopController(ICatalogoService catalogoService) : Controller
     {
         [HttpGet]
-        public async Task<IActionResult> Index(int? categoria)
+        public async Task<IActionResult> Index(int? categoria, string? buscar)
         {
             var respuestaProductos =
-                await catalogoService.ListarProductosAsync();
+                await catalogoService.ListarProductosAsync(buscar);
 
             var respuestaCategorias =
                 await catalogoService.ListarCategoriasAsync();
@@ -32,6 +32,7 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
 
             ViewBag.Categorias = categorias;
             ViewBag.CategoriaSeleccionada = categoria;
+            ViewBag.Busqueda = buscar;
 
             if (!respuestaProductos.Exitoso)
             {

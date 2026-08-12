@@ -20,8 +20,8 @@ namespace MiniStore_API.Services
             var cuentaGmail = _config["Correos:CuentaGmail"]!;
             var contrasenaAplicacion = _config["Correos:ContrasenaAplicacion"]!;
 
-            if (string.IsNullOrEmpty(contrasenaAplicacion))
-                return;
+            if (string.IsNullOrWhiteSpace(cuentaGmail) || string.IsNullOrWhiteSpace(contrasenaAplicacion))
+                throw new InvalidOperationException("La cuenta de correo de MiniStore no está configurada.");
 
             mensaje.From.Add(new MailboxAddress(string.Empty, cuentaGmail));
             mensaje.To.Add(MailboxAddress.Parse(destinatario));
@@ -42,7 +42,8 @@ namespace MiniStore_API.Services
             }
             finally
             {
-                await cliente.DisconnectAsync(true);
+                if (cliente.IsConnected)
+                    await cliente.DisconnectAsync(true);
             }
         }
 

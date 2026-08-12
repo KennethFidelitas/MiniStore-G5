@@ -17,12 +17,10 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
         [HttpGet]
         public IActionResult Configuracion()
         {
-            var consecutivo = HttpContext.Session.GetInt32("Consecutivo")!.Value;
-
             using var client = _http.CreateClient();
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("Token"));
-            var url = _config["Valores:UrlApi"] + "Usuario/ConsultarUsuarioAPI?consecutivo=" + consecutivo;
+            var url = _config["Valores:UrlApi"] + "Usuario/ConsultarUsuarioAPI";
             var response = client.GetAsync(url).Result;
 
             if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.NotFound)
@@ -40,9 +38,19 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult CambiarContrasenna(UsuarioModel model)
         {
-            model.Consecutivo = HttpContext.Session.GetInt32("Consecutivo")!.Value;
+            ModelState.Remove(nameof(UsuarioModel.Nombre));
+            ModelState.Remove(nameof(UsuarioModel.CorreoElectronico));
+
+            if (!string.IsNullOrEmpty(model.Contrasenna) && model.Contrasenna.Length < 8)
+                ModelState.AddModelError(
+                    nameof(UsuarioModel.Contrasenna),
+                    "La contraseña debe tener al menos 8 caracteres");
+
+            if (!ModelState.IsValid)
+                return View("Configuracion", model);
 
             if (model.Contrasenna != model.ConfirmarContrasenna)
             {
@@ -74,9 +82,14 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult CambiarPerfil(UsuarioModel model)
         {
-            model.Consecutivo = HttpContext.Session.GetInt32("Consecutivo")!.Value;
+            ModelState.Remove(nameof(UsuarioModel.Contrasenna));
+            ModelState.Remove(nameof(UsuarioModel.ConfirmarContrasenna));
+
+            if (!ModelState.IsValid)
+                return View("Configuracion", model);
 
             using var client = _http.CreateClient();
 

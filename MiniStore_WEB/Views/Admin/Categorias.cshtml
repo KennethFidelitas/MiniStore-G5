@@ -1,0 +1,33 @@
+@model List<CategoriaAdminModel>
+@{Layout="_AdminLayout";ViewData["Title"]="Categorías";}
+<div class="admin-page-heading">
+    <div><span class="admin-kicker">Catálogo</span><h1>Categorías</h1><p>Creá, editá o eliminá categorías sin afectar productos vinculados.</p></div>
+</div>
+@if(TempData["MensajeExito"]!=null){<div class="alert alert-success">@TempData["MensajeExito"]</div>}
+@if(TempData["MensajeError"]!=null){<div class="alert alert-danger">@TempData["MensajeError"]</div>}
+<section class="admin-panel mb-4">
+    <form asp-action="GuardarCategoria" method="post" class="row g-3 align-items-end">
+        <input type="hidden" name="Consecutivo" value="0" />
+        <div class="col-md-4"><label class="form-label">Nombre</label><input name="NombreCategoria" class="form-control" required maxlength="100" /></div>
+        <div class="col-md-5"><label class="form-label">Descripción</label><input name="Descripcion" class="form-control" maxlength="500" /></div>
+        <div class="col-md-2"><label class="form-label">Estado</label><select name="Estado" class="form-select"><option value="true">Activa</option><option value="false">Inactiva</option></select></div>
+        <div class="col-md-1"><button class="admin-primary-button">Crear</button></div>
+    </form>
+</section>
+@foreach(var c in Model)
+{
+    <section class="admin-panel mb-3">
+        <form asp-action="GuardarCategoria" method="post" class="row g-3 align-items-end">
+            <input type="hidden" name="Consecutivo" value="@c.Consecutivo" />
+            <div class="col-md-3"><label class="form-label">Nombre</label><input name="NombreCategoria" value="@c.NombreCategoria" class="form-control" required /></div>
+            <div class="col-md-4"><label class="form-label">Descripción</label><input name="Descripcion" value="@c.Descripcion" class="form-control" /></div>
+            <div class="col-md-2"><label class="form-label">Productos</label><input value="@c.CantidadProductos" class="form-control" disabled /></div>
+            <div class="col-md-2"><label class="form-label">Estado</label><select name="Estado" class="form-select"><option value="true" selected="@c.Estado">Activa</option><option value="false" selected="@(!c.Estado)">Inactiva</option></select></div>
+            <div class="col-md-1"><button class="btn btn-dark">Guardar</button></div>
+        </form>
+        <form asp-action="EliminarCategoria" method="post" class="mt-2 text-end">
+            <input type="hidden" name="id" value="@c.Consecutivo" />
+            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta categoría?')">Eliminar</button>
+        </form>
+    </section>
+}
