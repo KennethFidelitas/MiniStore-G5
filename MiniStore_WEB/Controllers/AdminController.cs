@@ -165,7 +165,22 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
             return RedirectToAction(nameof(Promociones));
         }
         public async Task<IActionResult> Pedidos() { var r = await adminService.ListarPedidosAsync(); return View(r.Datos ?? []); }
-        public async Task<IActionResult> DetallePedido(int id) { var r = await adminService.ObtenerPedidoAsync(id); return r.Datos == null ? NotFound() : View(r.Datos); }
+        public async Task<IActionResult> DetallePedido(int id)
+        {
+            var response = await adminService.ObtenerPedidoAsync(id);
+
+            var acceso = ValidarAccesoApi(response.Codigo);
+            if (acceso != null)
+                return acceso;
+
+            if (response.Codigo == HttpStatusCode.NotFound || response.Datos == null)
+            {
+                TempData["MensajeError"] = $"El pedido #{id} no existe o ya no está disponible.";
+                return RedirectToAction(nameof(Pedidos));
+            }
+
+            return View(response.Datos);
+        }
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ActualizarEstadoPedido(int id, string estado) { var r = await adminService.ActualizarEstadoPedidoAsync(id, estado); TempData[r.Exitoso ? "MensajeExito" : "MensajeError"] = r.Mensaje; return RedirectToAction(nameof(DetallePedido), new { id }); }
         public async Task<IActionResult> Clientes() { var r = await adminService.ListarClientesAsync(); return View(r.Datos ?? []); }
