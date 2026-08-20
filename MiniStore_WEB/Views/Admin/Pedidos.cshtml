@@ -1,3 +1,17 @@
 @model List<PedidoResumenModel>
-@{Layout="_AdminLayout";ViewData["Title"]="Pedidos";}
-<div class="admin-page-heading"><div><span class="admin-kicker">Ventas</span><h1>Pedidos</h1><p>Todos los pedidos, clientes y estados de entrega.</p></div></div><section class="admin-panel"><div class="table-responsive"><table class="table admin-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Productos</th><th>Total</th><th>Estado</th><th>Entrega</th><th></th></tr></thead><tbody>@foreach(var p in Model){<tr><td>#@p.Consecutivo</td><td><strong>@p.NombreCliente</strong><br/><small>@p.CorreoElectronico</small></td><td>@p.FechaPedido.ToString("dd/MM/yyyy")</td><td>@p.CantidadProductos</td><td>₡@p.Total.ToString("N2")</td><td>@p.Estado</td><td>@p.FechaEntregaEstimada?.ToString("dd/MM/yyyy")</td><td><a asp-action="DetallePedido" asp-route-id="@p.Consecutivo">Gestionar</a></td></tr>}</tbody></table></div></section>
+@{
+    Layout = "_AdminLayout"; ViewData["Title"] = "Pedidos";
+}
+<div class="admin-page-heading"><div><span class="admin-kicker">Ventas</span><h1>Pedidos</h1><p>Todos los pedidos, clientes y estados de entrega.</p></div></div>
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alert-danger">@TempData["MensajeError"]</div>
+}
+@if (TempData["MensajeExito"] != null)
+{
+    <div class="alert alert-success">@TempData["MensajeExito"]</div>
+}
+<section class="admin-panel"><div class="table-responsive"><table class="table admin-table"><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Productos</th><th>Total</th><th>Estado</th><th>Entrega</th><th></th></tr></thead><tbody>@foreach(var p in Model){
+    <tr><td>#@p.Consecutivo</td><td><strong>@p.NombreCliente</strong><br /><small>@p.CorreoElectronico</small></td><td>@p.FechaPedido.ToString("dd/MM/yyyy")</td><td>@p.CantidadProductos</td><td>₡@p.Total.ToString("N2")</td><td>@p.Estado</td><td>@p.FechaEntregaEstimada?.ToString("dd/MM/yyyy")</td><td><a asp-action="DetallePedido" asp-route-id="@p.Consecutivo">Gestionar</a></td></tr>
+}
+</tbody></table></div></section>
