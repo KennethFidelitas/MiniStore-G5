@@ -159,7 +159,31 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarEstadoPromocion(int id,bool estado){var r=await adminService.CambiarEstadoPromocionAsync(id,estado);TempData[r.Exitoso?"MensajeExito":"MensajeError"]=r.Mensaje;return RedirectToAction(nameof(Promociones));}
         public async Task<IActionResult> Pedidos(){var r=await adminService.ListarPedidosAsync();return View(r.Datos??[]);}
-        public async Task<IActionResult> DetallePedido(int id){var r=await adminService.ObtenerPedidoAsync(id);return r.Datos==null?NotFound():View(r.Datos);}
+        public async Task<IActionResult> DetallePedido(int id)
+        {
+            var response = await adminService.ObtenerPedidoAsync(id);
+
+            if (response.Codigo == HttpStatusCode.NotFound)
+            {
+                Response.StatusCode = StatusCodes.Status404NotFound;
+                ViewBag.ConsecutivoPedido = id;
+                return View("PedidoNoEncontrado");
+            }
+
+            var acceso = ValidarAccesoApi(response.Codigo);
+            if (acceso != null)
+                return acceso;
+
+            if (response.Datos == null)
+            {
+                TempData["MensajeError"] = string.IsNullOrWhiteSpace(response.Mensaje)
+                    ? "No fue posible consultar el pedido. Intentá nuevamente."
+                    : response.Mensaje;
+                return RedirectToAction(nameof(Pedidos));
+            }
+
+            return View(response.Datos);
+        }
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ActualizarEstadoPedido(int id,string estado){var r=await adminService.ActualizarEstadoPedidoAsync(id,estado);TempData[r.Exitoso?"MensajeExito":"MensajeError"]=r.Mensaje;return RedirectToAction(nameof(DetallePedido),new{id});}
         public async Task<IActionResult> Clientes(){var r=await adminService.ListarClientesAsync();return View(r.Datos??[]);}
