@@ -65,29 +65,38 @@ namespace MiniStore_API.Controllers
         [HttpPost("GuardarProductoAPI")]
         public IActionResult GuardarProductoAPI(GuardarProductoRequestModel model)
         {
-            using var context = CrearConexion();
-            var parameters = new DynamicParameters();
-            parameters.Add("@Consecutivo", model.Consecutivo);
-            parameters.Add("@Nombre", model.Nombre);
-            parameters.Add("@Descripcion", model.Descripcion);
-            parameters.Add("@Precio", model.Precio);
-            parameters.Add("@Stock", model.Stock);
-            parameters.Add("@Imagen", model.Imagen);
-            parameters.Add("@ConsecutivoCategoria", model.ConsecutivoCategoria);
-            parameters.Add("@Estado", model.Estado);
-
-            var consecutivo = context.QuerySingle<int>(
-                "spGuardarProducto",
-                parameters,
-                commandType: CommandType.StoredProcedure);
-
-            return Ok(new
+            try
             {
-                Consecutivo = consecutivo,
-                Mensaje = model.Consecutivo == 0
-                    ? "Producto creado correctamente."
-                    : "Producto actualizado correctamente."
-            });
+                using var context = CrearConexion();
+                var parameters = new DynamicParameters();
+                parameters.Add("@Consecutivo", model.Consecutivo);
+                parameters.Add("@Nombre", model.Nombre);
+                parameters.Add("@Descripcion", model.Descripcion);
+                parameters.Add("@Precio", model.Precio);
+                parameters.Add("@Stock", model.Stock);
+                parameters.Add("@Imagen", model.Imagen);
+                parameters.Add("@ConsecutivoCategoria", model.ConsecutivoCategoria);
+                parameters.Add("@Estado", model.Estado);
+                var consecutivo = context.QuerySingle<int>(
+                    "spGuardarProducto",
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+                return Ok(new
+                {
+                    Consecutivo = consecutivo,
+                    Mensaje = model.Consecutivo == 0
+                        ? "Producto creado correctamente."
+                        : "Producto actualizado correctamente."
+                });
+            }
+            catch (SqlException ex) when (ex.Number >= 50000)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Ocurrió un error al guardar el producto.");
+            }
         }
 
         [HttpPut("CambiarEstadoProductoAPI")]
