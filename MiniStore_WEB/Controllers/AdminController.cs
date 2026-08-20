@@ -137,33 +137,39 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
             model.Categorias = response.Datos?.Cast<CategoriaModel>().ToList() ?? [];
         }
 
-        public async Task<IActionResult> Categorias() { var r=await adminService.ListarCategoriasAsync(); ViewBag.Mensaje=r.Mensaje; return View(r.Datos ?? []); }
+        public async Task<IActionResult> Categorias() { var r = await adminService.ListarCategoriasAsync(); ViewBag.Mensaje = r.Mensaje; return View(r.Datos ?? []); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> GuardarCategoria(CategoriaAdminModel model) { if(!ModelState.IsValid){TempData["MensajeError"]="Revisá los datos de la categoría.";return RedirectToAction(nameof(Categorias));} var r=await adminService.GuardarCategoriaAsync(model);TempData[r.Exitoso?"MensajeExito":"MensajeError"]=r.Mensaje;return RedirectToAction(nameof(Categorias)); }
+        public async Task<IActionResult> GuardarCategoria(CategoriaAdminModel model) { if (!ModelState.IsValid) { TempData["MensajeError"] = "Revisá los datos de la categoría."; return RedirectToAction(nameof(Categorias)); } var r = await adminService.GuardarCategoriaAsync(model); TempData[r.Exitoso ? "MensajeExito" : "MensajeError"] = r.Mensaje; return RedirectToAction(nameof(Categorias)); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> EliminarCategoria(int id) { var r=await adminService.EliminarCategoriaAsync(id);TempData[r.Exitoso?"MensajeExito":"MensajeError"]=r.Mensaje;return RedirectToAction(nameof(Categorias)); }
-        public async Task<IActionResult> Promociones() { var r=await adminService.ListarPromocionesAsync(); return View(r.Datos ?? []); }
+        public async Task<IActionResult> EliminarCategoria(int id) { var r = await adminService.EliminarCategoriaAsync(id); TempData[r.Exitoso ? "MensajeExito" : "MensajeError"] = r.Mensaje; return RedirectToAction(nameof(Categorias)); }
+        public async Task<IActionResult> Promociones() { var r = await adminService.ListarPromocionesAsync(); return View(r.Datos ?? []); }
         public async Task<IActionResult> GuardarPromocion(int? id)
         {
-            var p=await adminService.ListarPromocionesAsync(); var productos=await adminService.ListarProductosAsync(); var categorias=await adminService.ListarCategoriasAsync();
-            return View(new PromocionFormViewModel { Promocion=p.Datos?.FirstOrDefault(x=>x.Consecutivo==id) ?? new(), Productos=productos.Datos ?? [], Categorias=categorias.Datos ?? [] });
+            var p = await adminService.ListarPromocionesAsync(); var productos = await adminService.ListarProductosAsync(); var categorias = await adminService.ListarCategoriasAsync();
+            return View(new PromocionFormViewModel { Promocion = p.Datos?.FirstOrDefault(x => x.Consecutivo == id) ?? new(), Productos = productos.Datos ?? [], Categorias = categorias.Datos ?? [] });
         }
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> GuardarPromocion(PromocionFormViewModel model)
         {
-            if(model.Promocion.ConsecutivoProducto.HasValue == model.Promocion.ConsecutivoCategoria.HasValue) ModelState.AddModelError(string.Empty,"Seleccioná un producto o una categoría, pero no ambos.");
-            if(model.Promocion.FechaFin < model.Promocion.FechaInicio) ModelState.AddModelError(string.Empty,"La fecha final no puede ser anterior a la inicial.");
-            if(!ModelState.IsValid){var p=await adminService.ListarProductosAsync();var c=await adminService.ListarCategoriasAsync();model.Productos=p.Datos??[];model.Categorias=c.Datos??[];return View(model);}
-            var r=await adminService.GuardarPromocionAsync(model.Promocion);TempData[r.Exitoso?"MensajeExito":"MensajeError"]=r.Mensaje;return r.Exitoso?RedirectToAction(nameof(Promociones)):View(model);
+            if (model.Promocion.ConsecutivoProducto.HasValue == model.Promocion.ConsecutivoCategoria.HasValue) ModelState.AddModelError(string.Empty, "Seleccioná un producto o una categoría, pero no ambos.");
+            if (model.Promocion.FechaFin < model.Promocion.FechaInicio) ModelState.AddModelError(string.Empty, "La fecha final no puede ser anterior a la inicial.");
+            if (!ModelState.IsValid) { var p = await adminService.ListarProductosAsync(); var c = await adminService.ListarCategoriasAsync(); model.Productos = p.Datos ?? []; model.Categorias = c.Datos ?? []; return View(model); }
+            var r = await adminService.GuardarPromocionAsync(model.Promocion); TempData[r.Exitoso ? "MensajeExito" : "MensajeError"] = r.Mensaje; return r.Exitoso ? RedirectToAction(nameof(Promociones)) : View(model);
         }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> CambiarEstadoPromocion(int id,bool estado){var r=await adminService.CambiarEstadoPromocionAsync(id,estado);TempData[r.Exitoso?"MensajeExito":"MensajeError"]=r.Mensaje;return RedirectToAction(nameof(Promociones));}
-        public async Task<IActionResult> Pedidos(){var r=await adminService.ListarPedidosAsync();return View(r.Datos??[]);}
-        public async Task<IActionResult> DetallePedido(int id){var r=await adminService.ObtenerPedidoAsync(id);return r.Datos==null?NotFound():View(r.Datos);}
+        public async Task<IActionResult> CambiarEstadoPromocion(int id, string accion)
+        {
+            var estadoObjetivo = string.Equals(accion, "activar", StringComparison.OrdinalIgnoreCase);
+            var r = await adminService.CambiarEstadoPromocionAsync(id, estadoObjetivo);
+            TempData[r.Exitoso ? "MensajeExito" : "MensajeError"] = r.Mensaje;
+            return RedirectToAction(nameof(Promociones));
+        }
+        public async Task<IActionResult> Pedidos() { var r = await adminService.ListarPedidosAsync(); return View(r.Datos ?? []); }
+        public async Task<IActionResult> DetallePedido(int id) { var r = await adminService.ObtenerPedidoAsync(id); return r.Datos == null ? NotFound() : View(r.Datos); }
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> ActualizarEstadoPedido(int id,string estado){var r=await adminService.ActualizarEstadoPedidoAsync(id,estado);TempData[r.Exitoso?"MensajeExito":"MensajeError"]=r.Mensaje;return RedirectToAction(nameof(DetallePedido),new{id});}
-        public async Task<IActionResult> Clientes(){var r=await adminService.ListarClientesAsync();return View(r.Datos??[]);}
-        public async Task<IActionResult> HistorialCliente(int id,string? nombre){var r=await adminService.HistorialClienteAsync(id);return View(new ClienteHistorialViewModel{ConsecutivoCliente=id,NombreCliente=nombre??"Cliente",Pedidos=r.Datos??[]});}
+        public async Task<IActionResult> ActualizarEstadoPedido(int id, string estado) { var r = await adminService.ActualizarEstadoPedidoAsync(id, estado); TempData[r.Exitoso ? "MensajeExito" : "MensajeError"] = r.Mensaje; return RedirectToAction(nameof(DetallePedido), new { id }); }
+        public async Task<IActionResult> Clientes() { var r = await adminService.ListarClientesAsync(); return View(r.Datos ?? []); }
+        public async Task<IActionResult> HistorialCliente(int id, string? nombre) { var r = await adminService.HistorialClienteAsync(id); return View(new ClienteHistorialViewModel { ConsecutivoCliente = id, NombreCliente = nombre ?? "Cliente", Pedidos = r.Datos ?? [] }); }
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarEstadoCliente(int id, string accion)
         {
@@ -176,7 +182,7 @@ namespace ProgramacionAvanzadaWebProyecto.Controllers
             TempData[response.Exitoso ? "MensajeExito" : "MensajeError"] = response.Mensaje;
             return RedirectToAction(nameof(Clientes));
         }
-        public async Task<IActionResult> Consultas(){var r=await adminService.ListarConsultasAsync();return View(r.Datos??[]);}
+        public async Task<IActionResult> Consultas() { var r = await adminService.ListarConsultasAsync(); return View(r.Datos ?? []); }
 
         public async Task<IActionResult> Publicaciones()
         {
